@@ -5,6 +5,7 @@ export enum RegisterType {
 }
 
 export interface IUserInfo {
+  id: string;
   nickName: string;
   mobilePhone?: string;
   email: string;

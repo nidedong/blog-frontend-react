@@ -23,6 +23,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "noImplicitAny": false,
     "paths": {
       "@/*": [
         "./src/*"
@@ -30,6 +31,6 @@
     }
   },
   "include": [
-    "src"
+    "src",
   ]
 }

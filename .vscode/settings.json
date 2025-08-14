@@ -1,0 +1,28 @@
+{
+  "fileheader.configObj": {
+    "autoAdd": false, // 自动添加头部注释开启才能自动添加
+    "autoAlready": false, // 默认开启, 只给支持的语言添加注释
+    "createHeader": false, // 新建文件不自动添加注释
+  },
+  "i18n-ally.localesPaths": [
+    "src/locales"
+  ],
+  "i18n-ally.keystyle": "nested", // 对象嵌套或平铺
+  "i18n-ally.sourceLanguage": "zh-CN", // 翻译时的源语言
+  "i18n-ally.displayLanguage": "zh-CN", // 注释和树视图中的显示语言
+  // "i18n-ally.translate.engines": [
+  //   "google-cn",
+  //   "baidu",
+  //   "google"
+  // ],
+  "i18n-ally.sortKeys": true, // 字母顺序排序
+  // "i18n-ally.namespace": true, // 开启命名空间
+  "i18n-ally.keepFulfilled": true, // 始终用空字符串填充所有的键
+  "i18n-ally.enabledParsers": [ // 指定文件格式
+    "yaml",
+    "json"
+  ],
+  "i18n-ally.enabledFrameworks": [ // 指定框架
+    "react"
+  ],
+}

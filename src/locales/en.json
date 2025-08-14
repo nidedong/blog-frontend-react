@@ -1,0 +1,65 @@
+{
+  "route": {
+    "home": "Overview",
+    "user_center": "Personal Center",
+    "react": "React",
+    "three_js": "Three.js",
+    "vue_js": "Vue.js"
+  },
+  "auth": {
+    "title": "dbb's Blog",
+    "other_login_type": "Other Login Methods",
+    "login_by_email": "Email Login",
+    "login_by_catpcha": "Verification Code Login",
+    "input_email": "Please enter email",
+    "email_format_error": "Invalid email format",
+    "input_password": "Please enter password",
+    "input_confirm_password": "Please confirm password",
+    "password_not_same": "Passwords do not match",
+    "input_captcha": "Please enter verification code",
+    "get_captcha": "Get Verification Code",
+    "get_captcha_success": "Verification code sent, please check your email!",
+    "register_account": "Register Account",
+    "login": "Login",
+    "froget_password": "Forgot Password",
+    "submit": "Submit",
+    "reset": "Reset",
+    "register": "Register",
+    "password_strength_low": "Strength: Weak",
+    "password_strength_middle": "Strength: Medium",
+    "password_strength_hight": "Strength: Strong",
+    "login_information_invalid": "Login information expired"
+  },
+  "user": {
+    "404msg": "Sorry, the page you visited does not exist",
+    "back_home": "Back to Home",
+    "avatar": "Avatar",
+    "email": "Email",
+    "mobile_phone": "Phone",
+    "gender": "Gender",
+    "remark": "Remark",
+    "base_info": "Basic Information",
+    "change_password": "Change Password",
+    "nick_name": "Nickname",
+    "profile": "Personal Center",
+    "logout": "Logout"
+  },
+  "options": {
+    "gender_man": "Male",
+    "gender_woman": "Female"
+  },
+  "tip": {
+    "img_is_not_jpg_or_png": "Uploaded image must be JPG or PNG",
+    "img_is_not_lessthan_2mb": "Image size must be less than 2MB",
+    "change_password_success": "Password changed successfully, please login again"
+  },
+  "validate": {
+    "phone_format_error": "Invalid phone number format"
+  },
+  "file": {
+    "upload_file_failed": "File upload failed, please try again"
+  },
+  "exception": {
+    "server_error": "Server Error"
+  }
+}

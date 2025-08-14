@@ -1,0 +1,65 @@
+{
+  "route": {
+    "home": "概览",
+    "user_center": "个人中心",
+    "react": "React",
+    "three_js": "Three.js",
+    "vue_js": "Vue.js"
+  },
+  "auth": {
+    "title": "dbb的博客",
+    "other_login_type": "其他登录方式",
+    "login_by_email": "邮箱密码登录",
+    "login_by_catpcha": "验证码登录",
+    "input_email": "请输入邮箱",
+    "email_format_error": "邮箱格式错误",
+    "input_password": "请输入密码",
+    "input_confirm_password": "请输入确认密码",
+    "password_not_same": "两次输入密码不一致",
+    "input_captcha": "请输入验证码",
+    "get_captcha": "获取验证码",
+    "get_captcha_success": "获取验证码成功，请前往邮箱查看！",
+    "register_account": "注册账号",
+    "login": "登录",
+    "froget_password": "忘记密码",
+    "submit": "提交",
+    "reset": "重置",
+    "register": "注册",
+    "password_strength_low": "强度：弱",
+    "password_strength_middle": "强度：中",
+    "password_strength_hight": "强度：强",
+    "login_information_invalid": "登录信息失效"
+  },
+  "user": {
+    "404msg": "抱歉，您访问的页面不存在",
+    "back_home": "返回首页",
+    "avatar": "头像",
+    "email": "邮箱",
+    "mobile_phone": "手机",
+    "gender": "性别",
+    "remark": "备注",
+    "base_info": "基础信息",
+    "change_password": "修改密码",
+    "nick_name": "昵称",
+    "profile": "个人中心",
+    "logout": "退出登录"
+  },
+  "options": {
+    "gender_man": "男",
+    "gender_woman": "女"
+  },
+  "tip": {
+    "img_is_not_jpg_or_png": "上传图片不是jpg或者png类型",
+    "img_is_not_lessthan_2mb": "上传图片必须小于2MB",
+    "change_password_success": "修改密码成功，请重新登录"
+  },
+  "validate": {
+    "phone_format_error": "手机格式错误"
+  },
+  "file": {
+    "upload_file_failed": "上传文件失败，请重试"
+  },
+  "exception": {
+    "server_error": "服务器错误"
+  }
+}
