@@ -1,5 +1,3 @@
-import { RcFile } from 'antd/es/upload';
-
 // 根据文件扩展名获取 Content-Type
 export function getContentType(filename) {
   const extension = filename.split('.').pop().toLowerCase();
