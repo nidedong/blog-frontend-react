@@ -11,7 +11,7 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Navigate replace to='home' />,
+        element: <Navigate replace to='/home' />,
       },
       ...userRoutes,
       ...mainRoutes,

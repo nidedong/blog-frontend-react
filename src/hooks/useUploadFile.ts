@@ -1,10 +1,10 @@
 import { finishedUploadApi, getPresignedUploadUrlApi, uploadFileApi } from '@/services';
-import { RcFile } from 'antd/es/upload';
 import { useMutation } from 'react-query';
 import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { RcFile } from 'antd/es/upload';
 
 const useUploadFile = () => {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);

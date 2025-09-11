@@ -11,9 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { encryptPassword, regex } from '@/utils';
 import { NavLink, useNavigate } from 'react-router';
 import { useMutation } from 'react-query';
-import { registerAccountApi, getCaptchaApi } from './service';
+import { registerAccountApi, getCaptchaApi, IRegisterAccountParams } from './service';
 import styles from './index.module.less';
 import { useRef } from 'react';
+import { omit } from 'lodash-es';
 
 const Login = () => {
   const { token } = theme.useToken();
@@ -30,10 +31,11 @@ const Login = () => {
     if (formData.password) {
       formData.password = encryptPassword(formData.password);
     }
-    registerAccountQuery.mutateAsync(formData).then((res) => {
-      console.log('🚀 ~ handleFinish ~ res:', res);
-      navigate('/user/login');
-    });
+    registerAccountQuery
+      .mutateAsync(omit(formData, 'confirmPassword') as IRegisterAccountParams)
+      .then(() => {
+        navigate('/user/login');
+      });
   };
 
   return (
