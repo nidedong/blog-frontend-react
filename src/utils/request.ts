@@ -35,11 +35,6 @@ instance.interceptors.response.use(
     const { config, data, headers } = response;
     const { flatData = true, origin = false, silent = false } = config;
 
-    // 其他方式登录
-    if (headers.access_token) {
-      setToken(headers.access_token);
-    }
-
     // 登录信息过期，从响应头设置新token
     if (headers.refresh_token) {
       setToken(headers.refresh_token);
