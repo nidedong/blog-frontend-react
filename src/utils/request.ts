@@ -3,6 +3,7 @@ import { getToken, logout, setToken } from './auth';
 import { message as AntdMessage } from 'antd';
 import type { IResType } from '@/types';
 import i18n from '@/utils/i18n';
+import { getLanguage } from './storage';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASEURL,
@@ -16,6 +17,12 @@ instance.interceptors.request.use(
     if (useToken && token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    const lang = getLanguage();
+    if (lang) {
+      config.headers['x-custom-lang'] = lang;
+    }
+
     return config;
   },
   function (error) {
@@ -28,8 +35,12 @@ instance.interceptors.response.use(
     const { config, data, headers } = response;
     const { flatData = true, origin = false, silent = false } = config;
 
+    // 其他方式登录
+    if (headers.access_token) {
+      setToken(headers.access_token);
+    }
+
     // 登录信息过期，从响应头设置新token
-    console.log('🚀 ~ headers.refresh_token:', headers.refresh_token);
     if (headers.refresh_token) {
       setToken(headers.refresh_token);
     }
