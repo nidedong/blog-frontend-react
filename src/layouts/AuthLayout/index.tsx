@@ -1,14 +1,15 @@
-import { ACCESS_TOKEN_KEY, getToken, setToken } from '@/utils';
+import { getToken, setToken } from '@/utils';
 import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router';
-import Cookie from 'js-cookie';
 
 const AuthLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const token = getToken();
 
-  const access_token = Cookie.get(ACCESS_TOKEN_KEY);
+  const urlParams = new URLSearchParams(location.search);
+
+  const access_token = urlParams.get('access_token');
 
   const { t } = useTranslation();
 
