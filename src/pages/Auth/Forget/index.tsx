@@ -3,21 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { encryptPassword } from '@/utils';
 import { NavLink, useNavigate } from 'react-router';
 import { useMutation } from 'react-query';
-import { registerAccountApi, getCaptchaApi, IRegisterAccountParams } from './service';
+import { forgetPasswordApi, getCaptchaApi, IForgetPasswordParams } from './service';
 import { useState } from 'react';
 import { omit } from 'lodash-es';
-import Box from '@mui/material/Box';
+import { Controller, useForm } from 'react-hook-form';
+import { useCountDown } from 'ahooks';
+import Container from '../components/Container';
+import Card from '../components/Card';
+import { LogoIcon } from '@/components';
+import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import FormLabel from '@mui/material/FormLabel';
-import { Controller, useForm } from 'react-hook-form';
-import { useCountDown } from 'ahooks';
-import Card from '../components/Card';
-import { LogoIcon } from '@/components';
-import Container from '../components/Container';
-import FormControl from '@mui/material/FormControl';
+import Box from '@mui/material/Box';
 import FormHelperText from '@mui/material/FormHelperText';
 
 export interface FormValues {
@@ -27,7 +27,7 @@ export interface FormValues {
   confirmPassword?: string;
 }
 
-const Register = () => {
+const Forget = () => {
   const { t } = useTranslation();
 
   const [targetDate, setTargetDate] = useState<number>(0);
@@ -47,17 +47,17 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const registerAccountQuery = useMutation(registerAccountApi);
+  const forgetPasswordQuery = useMutation(forgetPasswordApi);
   const getCaptchaQuery = useMutation(getCaptchaApi);
 
-  const loading = registerAccountQuery.isLoading || getCaptchaQuery.isLoading;
+  const loading = forgetPasswordQuery.isLoading || getCaptchaQuery.isLoading;
 
   const onSubmit = (formData) => {
     if (formData.password) {
       formData.password = encryptPassword(formData.password);
     }
-    registerAccountQuery
-      .mutateAsync(omit(formData, 'confirmPassword') as IRegisterAccountParams)
+    forgetPasswordQuery
+      .mutateAsync(omit(formData, 'confirmPassword') as IForgetPasswordParams)
       .then(() => {
         navigate('/user/login');
       });
@@ -80,7 +80,7 @@ const Register = () => {
       <Card variant='outlined'>
         <LogoIcon />
         <Typography variant='h4' sx={{ fontWeight: 500 }}>
-          {t('auth.register_account')}
+          {t('auth.forget_password')}
         </Typography>
 
         <Box
@@ -111,10 +111,10 @@ const Register = () => {
           <Controller
             name='password'
             control={control}
-            rules={{ required: t('auth.input_password') }}
+            rules={{ required: t('auth.input_new_password') }}
             render={({ field, fieldState }) => (
               <FormControl>
-                <FormLabel htmlFor='password'>{t('auth.password')}</FormLabel>
+                <FormLabel htmlFor='password'>{t('auth.new_password')}</FormLabel>
                 <TextField
                   {...field}
                   id='password'
@@ -186,31 +186,19 @@ const Register = () => {
             )}
           />
 
-          <Button size='large' loading={loading} type='submit' variant='contained' fullWidth>
-            {t('auth.register')}
+          <Button loading={loading} type='submit' variant='contained' fullWidth>
+            {t('auth.reset_password')}
           </Button>
-        </Box>
-
-        <Box className='flex items-center justify-between' sx={{ mt: 2 }}>
-          <Typography variant='body2'>
+          <Typography variant='body2' sx={{ alignSelf: 'center' }}>
             {t('auth.already_have_account')}？{' '}
             <Link component={NavLink} to='/user/login' color='primary' underline='hover'>
               {t('auth.go_to_login')}
             </Link>
           </Typography>
-          <Link
-            component={NavLink}
-            to='/user/forget'
-            underline='hover'
-            variant='body2'
-            color='primary'
-          >
-            {t('auth.froget_password')}？
-          </Link>
         </Box>
       </Card>
     </Container>
   );
 };
 
-export default Register;
+export default Forget;

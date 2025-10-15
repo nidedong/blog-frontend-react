@@ -12,3 +12,13 @@ declare module 'axios' {
     useToken?: boolean;
   }
 }
+
+// 自定义mui主体变量
+import '@mui/material/styles';
+
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    // custom?: string;
+    // section?: string;
+  }
+}

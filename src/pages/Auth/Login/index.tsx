@@ -1,33 +1,50 @@
-import {
-  GithubOutlined,
-  GoogleOutlined,
-  LockOutlined,
-  MailOutlined,
-  ReadOutlined,
-} from '@ant-design/icons';
-import {
-  LoginForm,
-  ProConfigProvider,
-  ProFormCaptcha,
-  ProFormText,
-  setAlpha,
-} from '@ant-design/pro-components';
-import { Space, Tabs, message, theme } from 'antd';
-import type { CSSProperties } from 'react';
+import { message } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { encryptPassword, regex, setToken, toHome } from '@/utils';
+import { encryptPassword, setToken, toHome } from '@/utils';
 import { NavLink } from 'react-router';
 import { useMutation } from 'react-query';
 import { getCaptchaApi, loginByCaptchaApi, loginByEmailApi } from './service';
+import { Controller, useForm } from 'react-hook-form';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import FormLabel from '@mui/material/FormLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Divider from '@mui/material/Divider';
+import { useCountDown } from 'ahooks';
+import { pick } from 'lodash-es';
+import Container from '../components/Container';
+import Card from '../components/Card';
+import { GoogleIcon, LogoIcon, GithubIcon } from '@/components';
 
 type LoginType = 'email' | 'captcha';
 
-const Login = () => {
-  const { token } = theme.useToken();
-  const [loginType, setLoginType] = useState<LoginType>('email');
+export interface FormValues {
+  email: string;
+  captcha?: string;
+  password?: string;
+}
 
+const Login = () => {
   const { t } = useTranslation();
+  const [loginType, setLoginType] = useState<LoginType>('email');
+  const [targetDate, setTargetDate] = useState<number>(0);
+
+  const [countdown] = useCountDown({
+    targetDate,
+  });
+
+  const { handleSubmit, control, trigger, getValues, reset } = useForm<FormValues>({
+    defaultValues: {
+      email: '',
+      captcha: '',
+      password: '',
+    },
+  });
 
   const loginByEmailQuery = useMutation(loginByEmailApi, {
     onSuccess(res) {
@@ -47,160 +64,217 @@ const Login = () => {
 
   const loading = loginByEmailQuery.isLoading || loginByCaptchaQuery.isLoading;
 
-  const iconStyles: CSSProperties = {
-    marginInlineStart: '16px',
-    color: setAlpha(token.colorTextBase, 0.2),
-    fontSize: '24px',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-  };
-
-  const handleFinish = (formData) => {
+  const onSubmit = (formData: FormValues) => {
     if (loginType === 'email') {
       if (formData.password) {
         formData.password = encryptPassword(formData.password);
       }
-      loginByEmailQuery.mutate(formData);
+      loginByEmailQuery.mutate(pick(formData, 'email', 'password') as any);
     } else if (loginType === 'captcha') {
-      loginByCaptchaQuery.mutate(formData);
+      loginByCaptchaQuery.mutate(pick(formData, 'email', 'captcha') as any);
     }
   };
 
+  const handleSendCaptcha = async () => {
+    const isValid = await trigger('email');
+    if (!isValid) return;
+    const email = getValues('email');
+    setTargetDate(Date.now() + 60000);
+    getCaptchaQuery
+      .mutateAsync({
+        email,
+      })
+      .then(() => message.success(t('auth.get_captcha_success')));
+  };
+
   return (
-    <ProConfigProvider hashed={false}>
-      <div style={{ backgroundColor: token.colorBgContainer }}>
-        <LoginForm
-          logo={<ReadOutlined style={{ fontSize: 50 }} />}
-          // title={t('auth.title')}
-          actions={
-            <Space>
-              {t('auth.other_login_type')}
-              <a target='_self' href='/api/user/login/github'>
-                <GithubOutlined style={iconStyles} />
-              </a>
-              <a target='_self' href='/api/user/login/google'>
-                <GoogleOutlined style={iconStyles} />
-              </a>
-            </Space>
-          }
-          submitter={{ searchConfig: { submitText: t('auth.login'), resetText: t('auth.reset') } }}
-          onFinish={handleFinish}
-          loading={loading}
+    <Container>
+      <Card variant='outlined'>
+        <LogoIcon />
+        <Typography variant='h4' sx={{ fontWeight: 500 }}>
+          {t('auth.login')}
+        </Typography>
+
+        <Box
+          component='form'
+          sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <Tabs
-            centered
-            activeKey={loginType}
-            onChange={(activeKey) => setLoginType(activeKey as LoginType)}
-          >
-            <Tabs.TabPane key={'email'} tab={t('auth.login_by_email')} />
-            <Tabs.TabPane key={'captcha'} tab={t('auth.login_by_catpcha')} />
-          </Tabs>
-          {loginType === 'email' && (
+          {loginType === 'email' ? (
             <>
-              <ProFormText
+              <Controller
                 name='email'
-                fieldProps={{
-                  size: 'large',
-                  prefix: <MailOutlined className='prefixIcon' />,
-                }}
-                placeholder={t('auth.input_email')}
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('auth.input_email')}!`,
-                  },
-                  {
-                    pattern: regex.email,
-                    message: `${t('auth.email_format_error')}`,
-                  },
-                ]}
+                control={control}
+                rules={{ required: t('auth.input_email') }}
+                render={({ field, fieldState }) => (
+                  <FormControl>
+                    <FormLabel htmlFor='email'>{t('auth.email')}</FormLabel>
+                    <TextField
+                      {...field}
+                      type='email'
+                      placeholder='your@email.com'
+                      id='email'
+                      fullWidth
+                      variant='outlined'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                    />
+                  </FormControl>
+                )}
               />
-              <ProFormText.Password
+
+              <Controller
                 name='password'
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined className='prefixIcon' />,
-                }}
-                placeholder={t('auth.input_password')}
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('auth.input_password')}!`,
-                  },
-                ]}
+                control={control}
+                rules={{ required: t('auth.input_password') }}
+                render={({ field, fieldState }) => (
+                  <FormControl>
+                    <FormLabel htmlFor='password'>{t('auth.password')}</FormLabel>
+                    <TextField
+                      {...field}
+                      id='password'
+                      type='password'
+                      fullWidth
+                      placeholder='••••••'
+                      variant='outlined'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                    />
+                  </FormControl>
+                )}
               />
             </>
-          )}
-          {loginType === 'captcha' && (
+          ) : (
             <>
-              <ProFormText
-                fieldProps={{
-                  size: 'large',
-                  prefix: <MailOutlined className={'prefixIcon'} />,
-                }}
+              <Controller
                 name='email'
-                placeholder={t('auth.input_email')}
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('auth.input_email')}!`,
-                  },
-                  {
-                    pattern: regex.email,
-                    message: `${t('auth.email_format_error')}`,
-                  },
-                ]}
+                control={control}
+                rules={{ required: t('auth.input_email') }}
+                render={({ field, fieldState }) => (
+                  <FormControl>
+                    <FormLabel htmlFor='email'>{t('auth.email')}</FormLabel>
+                    <TextField
+                      {...field}
+                      id='email'
+                      type='email'
+                      placeholder='your@email.com'
+                      fullWidth
+                      variant='outlined'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                    />
+                  </FormControl>
+                )}
               />
-              <ProFormCaptcha
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined className='prefixIcon' />,
-                }}
-                captchaProps={{
-                  size: 'large',
-                }}
-                placeholder={t('auth.get_captcha')}
-                captchaTextRender={(timing, count) => {
-                  if (timing) {
-                    return `${count} ${t('auth.get_captcha')}`;
-                  }
-                  return t('auth.get_captcha');
-                }}
+
+              <Controller
                 name='captcha'
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('auth.input_captcha')}!`,
-                  },
-                ]}
-                phoneName='email'
-                onGetCaptcha={async (email) => {
-                  getCaptchaQuery
-                    .mutateAsync({
-                      email,
-                    })
-                    .then(() => message.success(t('auth.get_captcha_success')));
-                }}
+                control={control}
+                rules={{ required: t('auth.input_captcha') }}
+                render={({ field, fieldState }) => (
+                  <div>
+                    <FormLabel htmlFor='captcha'>{t('auth.captcha')}</FormLabel>
+                    <FormControl error={!!fieldState.error}>
+                      <Box sx={{ display: 'flex', alignItems: 'stretch', columnGap: 2, mt: 1 }}>
+                        <TextField
+                          {...field}
+                          fullWidth
+                          id='captcha'
+                          placeholder={t('auth.input_captcha')}
+                          variant='outlined'
+                        />
+                        <Button
+                          sx={{ whiteSpace: 'nowrap', width: 200 }}
+                          variant='outlined'
+                          onClick={handleSendCaptcha}
+                          disabled={countdown !== 0}
+                          size='large'
+                        >
+                          {t('auth.get_captcha')}
+                          {countdown !== 0 ? `(${Math.round(countdown / 1000)})` : ''}
+                        </Button>
+                      </Box>
+                      {fieldState.error?.message && (
+                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                      )}
+                    </FormControl>
+                  </div>
+                )}
               />
             </>
           )}
-          <div
-            style={{
-              marginBlockEnd: 24,
-            }}
-          >
-            <NavLink to='/user/register'>{t('auth.register_account')}</NavLink>
-            <a
-              style={{
-                float: 'right',
-              }}
+
+          <Button size='large' loading={loading} type='submit' variant='contained' fullWidth>
+            {t('auth.login')}
+          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {loginType === 'email' ? (
+              <Link
+                underline='hover'
+                color='primary'
+                variant='body2'
+                onClick={() => {
+                  reset();
+                  setLoginType('captcha');
+                }}
+              >
+                {t('auth.login_by_catpcha')}
+              </Link>
+            ) : (
+              <Link
+                underline='hover'
+                color='primary'
+                variant='body2'
+                onClick={() => {
+                  reset();
+                  setLoginType('email');
+                }}
+              >
+                {t('auth.login_by_email')}
+              </Link>
+            )}
+            <Link
+              component={NavLink}
+              to='/user/forget'
+              underline='hover'
+              variant='body2'
+              color='primary'
+              sx={{ alignSelf: 'center' }}
             >
-              {t('auth.froget_password')}
-            </a>
-          </div>
-        </LoginForm>
-      </div>
-    </ProConfigProvider>
+              {t('auth.froget_password')}？
+            </Link>
+          </Box>
+
+          <Divider>or</Divider>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Button
+              fullWidth
+              variant='outlined'
+              href='/api/user/login/google'
+              startIcon={<GoogleIcon />}
+            >
+              {t('auth.login_by_google')}
+            </Button>
+            <Button
+              fullWidth
+              variant='outlined'
+              href='/api/user/login/github'
+              startIcon={<GithubIcon />}
+            >
+              {t('auth.login_by_github')}
+            </Button>
+          </Box>
+
+          <Typography variant='body2' sx={{ alignSelf: 'center' }}>
+            {t('auth.dont_have_account')}？{' '}
+            <Link component={NavLink} to='/user/register' color='primary' underline='hover'>
+              {t('auth.register_account')}
+            </Link>
+          </Typography>
+        </Box>
+      </Card>
+    </Container>
   );
 };
 
