@@ -1,9 +1,9 @@
 import { LanguageEnum } from '@/utils/i18n';
 import { setLanguage } from '@/utils/storage';
 import { useTranslation } from 'react-i18next';
-import Chip, { type ChipProps } from '@mui/material/Chip';
+import Button, { type ButtonProps } from '@mui/material/Button';
 
-const SwitchLanguage: React.FC<ChipProps> = (props) => {
+const SwitchLanguage: React.FC<ButtonProps> = (props) => {
   const { i18n } = useTranslation();
 
   const handleChange = () => {
@@ -14,13 +14,9 @@ const SwitchLanguage: React.FC<ChipProps> = (props) => {
   };
 
   return (
-    <Chip
-      label={i18n.language === LanguageEnum.chinese ? 'English' : '中文'}
-      variant='outlined'
-      size='medium'
-      onClick={handleChange}
-      {...props}
-    ></Chip>
+    <Button variant='outlined' size='small' onClick={handleChange} {...props}>
+      {i18n.language === LanguageEnum.chinese ? 'English' : '中文'}
+    </Button>
   );
 };
 

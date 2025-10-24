@@ -1,6 +1,5 @@
 import { IFileEntity } from '@/types';
 import { request } from '@/utils';
-import { RcFile } from 'antd/es/upload';
 import axios from 'axios';
 
 export interface IPresignedUrlParams {
@@ -30,7 +29,7 @@ export const getPresignedDownloadUrlApi = (params: IPresignedUrlParams): Promise
     params,
   });
 
-export const uploadFileApi = (params: { url: string; file: RcFile }): Promise<any> => {
+export const uploadFileApi = (params: { url: string; file: File }): Promise<any> => {
   const { url, file } = params;
   return axios({
     method: 'put',

@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getToken, logout, setToken } from './auth';
 import { message as AntdMessage } from 'antd';
-import type { IResType } from '@/types';
 import i18n from '@/utils/i18n';
 import { getLanguage } from './storage';
 

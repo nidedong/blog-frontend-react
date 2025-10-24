@@ -1,6 +1,8 @@
 import { SwitchLanguage } from '@/components';
+import ColorModeIconDropdown from '@/themes/ColorModeIconDropdown';
 import Stack, { type StackProps } from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import React from 'react';
 
 const StyledContainer = styled(Stack)(({ theme }) => {
@@ -30,7 +32,18 @@ const StyledContainer = styled(Stack)(({ theme }) => {
 const Container: React.FC<React.PropsWithChildren<StackProps>> = (props) => {
   return (
     <StyledContainer {...props}>
-      <SwitchLanguage sx={{ position: 'absolute', top: 20, right: 20 }} />
+      <Box
+        sx={(theme) => ({
+          position: 'absolute',
+          top: 20,
+          right: 20,
+          display: 'flex',
+          columnGap: theme.spacing(1),
+        })}
+      >
+        <ColorModeIconDropdown />
+        <SwitchLanguage />
+      </Box>
       {props.children}
     </StyledContainer>
   );

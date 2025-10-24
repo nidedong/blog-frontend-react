@@ -1,4 +1,3 @@
-import { IResType } from '@/types';
 import { request } from '@/utils';
 
 export interface IRegisterAccountParams {

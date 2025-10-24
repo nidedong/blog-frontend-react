@@ -198,7 +198,6 @@ export const navigationCustomizations: Components<Theme> = {
         ':hover': {
           color: (theme.vars || theme).palette.text.primary,
           backgroundColor: gray[100],
-          borderColor: gray[200],
         },
         [`&.${tabClasses.selected}`]: {
           color: gray[900],
@@ -207,7 +206,6 @@ export const navigationCustomizations: Components<Theme> = {
           ':hover': {
             color: (theme.vars || theme).palette.text.primary,
             backgroundColor: gray[800],
-            borderColor: gray[700],
           },
           [`&.${tabClasses.selected}`]: {
             color: '#fff',

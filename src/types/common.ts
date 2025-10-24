@@ -1,26 +1,9 @@
+import React from 'react';
+import { type RouteObject } from 'react-router';
+
 export enum SorterEnum {
   DESC = -1,
   ASC = 1,
-}
-
-export interface IResType<D = unknown> {
-  success: boolean;
-  message?: string;
-  code: number;
-  data?: D;
-}
-
-export interface IResPaginationType<D = unknown> extends IResType {
-  data?: {
-    list: D[];
-    total: number;
-  };
-}
-
-export interface IReqPaginationParams {
-  start: number;
-  end: number;
-  order?: SorterEnum;
 }
 
 export enum FileStatus {
@@ -40,4 +23,11 @@ export interface IFileEntity {
   uploaderId: string;
   metaData?: string;
   expireAt?: number;
+}
+
+export interface RouteObjectHandle {
+  icon?: React.ReactNode;
+  name?: string;
+  hideInMenu?: boolean;
+  to?: string;
 }

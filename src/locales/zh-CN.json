@@ -1,4 +1,7 @@
 {
+  "app": {
+    "title": "网站标题"
+  },
   "route": {
     "home": "概览",
     "user_center": "个人中心",
@@ -52,13 +55,18 @@
     "remark": "备注",
     "base_info": "基础信息",
     "change_password": "修改密码",
+    "change_profile_info": "修改信息",
     "nick_name": "昵称",
     "profile": "个人中心",
-    "logout": "退出登录"
+    "logout": "退出登录",
+    "setting": "个人设置"
   },
   "options": {
     "gender_man": "男",
-    "gender_woman": "女"
+    "gender_woman": "女",
+    "theme_system": "跟随系统",
+    "theme_light": "浅色主题",
+    "theme_dark": "黑暗主题"
   },
   "tip": {
     "img_is_not_jpg_or_png": "上传图片不是jpg或者png类型",

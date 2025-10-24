@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 export interface IGlobalState {
   user?: IUserInfo;
+  loading?: boolean
 }
 
 export interface IGlobalAction {

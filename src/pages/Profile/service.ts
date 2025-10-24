@@ -1,4 +1,4 @@
-import { IResType, IUserInfo } from '@/types';
+import { IUserInfo } from '@/types';
 import { request } from '@/utils';
 
 export interface IGetChaptchaParams {
