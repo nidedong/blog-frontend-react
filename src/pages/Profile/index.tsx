@@ -1,39 +1,59 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './index.module.less';
 import { useGlobalState } from '@/stores/global';
-import { message, Tabs, theme, Upload } from 'antd';
-import {
-  ProForm,
-  ProFormCaptcha,
-  ProFormInstance,
-  ProFormRadio,
-  ProFormText,
-  ProFormTextArea,
-} from '@ant-design/pro-components';
 import { useTranslation } from 'react-i18next';
-import { LockOutlined } from '@ant-design/icons';
 import { useMutation } from 'react-query';
-import { nth, omit } from 'lodash-es';
+import { omit } from 'lodash-es';
 import { genderOptions } from '@/constants';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import type { UploadProps } from 'antd/es/upload/interface';
+import TabPanel from '@mui/lab/TabPanel';
+import TabContext from '@mui/lab/TabContext';
 import { encryptPassword, logout, validateImg } from '@/utils';
 import { changePasswordApi, getCaptchaApi, updateProfileApi } from './service';
 import { useProfile, useUploadFile } from '@/hooks';
+import { Controller, useForm } from 'react-hook-form';
+import { IUserInfo } from '@/types';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Avatar from '@mui/material/Avatar';
+import TextField from '@mui/material/TextField';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import Button from '@mui/material/Button';
+import FormHelperText from '@mui/material/FormHelperText';
+import { useCountDown } from 'ahooks';
+import { Spin } from '@/components';
+import { toast } from 'react-hot-toast';
+
+interface IFormValues extends Partial<IUserInfo> {
+  password?: string;
+  confirmPassword?: string;
+  captcha?: string;
+}
 
 const Profile: React.FC = () => {
   const user = useGlobalState((state) => state.user);
-  const formRef = useRef<ProFormInstance>();
   const [tab, setTab] = useState('baseInfo');
-  const { token } = theme.useToken();
+
+  const fileInputRef = useRef<HTMLInputElement | null>();
 
   const { t } = useTranslation();
+  const [targetDate, setTargetDate] = useState<number>(0);
+
+  const { handleSubmit, control, getValues, trigger, setValue, reset } = useForm<IFormValues>();
 
   const profileQuery = useProfile();
 
+  const [countdown] = useCountDown({
+    targetDate,
+  });
+
   const changePasswordMutation = useMutation(changePasswordApi, {
     onSuccess() {
-      message.success(`${t('tip.change_password_success')}!`);
+      toast.success(`${t('tip.change_password_success')}!`);
       logout();
     },
   });
@@ -51,31 +71,16 @@ const Profile: React.FC = () => {
     setFileUrl: setAvatarUrl,
   } = useUploadFile();
 
-  const uploadButton = (
-    <div>
-      {isUploading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
   const getCaptchaQuery = useMutation(getCaptchaApi);
 
   useEffect(() => {
     if (user) {
-      formRef.current?.setFieldsValue(user);
+      reset(omit(user, 'avatar'));
       setAvatarUrl(user.avatar);
     }
   }, [user]);
 
-  const handleBeforeUpload: UploadProps['beforeUpload'] = async (file) => {
-    if (!validateImg(file)) return false;
-    onUpload(file, {
-      isPublic: true,
-    });
-    return false;
-  };
-
-  const handleFinish = (formData) => {
+  const handleFinish = (formData: IFormValues) => {
     if (tab === 'baseInfo') {
       const params = omit(formData, 'email');
       updateProfileMutation.mutate({
@@ -86,190 +91,312 @@ const Profile: React.FC = () => {
       const newPassword = encryptPassword(formData.password);
       changePasswordMutation.mutateAsync({
         password: newPassword!,
-        captcha: formData.captcha,
+        captcha: formData.captcha!,
       });
     }
   };
 
-  const isLoading = changePasswordMutation.isLoading || updateProfileMutation.isLoading;
+  const handleSendCaptcha = async () => {
+    const isValid = await trigger('email');
+    if (!isValid) return;
+    const email = getValues('email')!;
+    setTargetDate(Date.now() + 60000);
+    getCaptchaQuery
+      .mutateAsync({
+        email,
+      })
+      .then(() => toast.success(t('auth.get_captcha_success')));
+  };
 
   return (
-    <div className={styles.profile}>
-      <ProForm
-        formRef={formRef}
-        submitter={{
-          render: (_, dom) => {
-            return <div className={styles.submitter}>{nth(dom, 1)}</div>;
-          },
-        }}
-        onFinish={handleFinish}
-        loading={isLoading}
-      >
-        <Tabs
-          centered
-          activeKey={tab}
-          onChange={(key) => setTab(key)}
-          items={[
-            {
-              label: t('user.base_info'),
-              key: 'baseInfo',
-              children: (
-                <>
-                  <ProForm.Item name='avatar' label={t('user.avatar')}>
-                    <Upload
-                      beforeUpload={handleBeforeUpload}
-                      listType='picture-card'
-                      showUploadList={false}
-                      maxCount={1}
-                      accept='.jpg,.jpeg,.png,.gif,.webp'
-                    >
-                      {avatarUrl ? (
-                        <img className={styles.avatar} src={avatarUrl} alt='avatar' />
-                      ) : (
-                        uploadButton
-                      )}
-                    </Upload>
-                  </ProForm.Item>
-                  <ProFormText name='email' label={t('user.email')} disabled />
-                  <ProFormText name='nickName' label={t('user.nick_name')} />
-                  <ProFormText
-                    rules={[
-                      {
-                        pattern: /^1[3-9]\d{9}$/,
-                        message: t('validate.phone_format_error'),
-                      },
-                    ]}
-                    name='mobilePhone'
-                    label={t('user.mobile_phone')}
-                  />
-                  <ProFormRadio.Group
-                    options={genderOptions}
-                    name='gender'
-                    label={t('user.gender')}
-                  />
-                  <ProFormTextArea
-                    fieldProps={{ rows: 3 }}
-                    name='remark'
-                    label={t('user.remark')}
-                  />
-                </>
-              ),
-            },
-            {
-              label: t('user.change_password'),
-              key: 'changePassword',
-              children: (
-                <>
-                  <ProFormText name='email' label={t('user.email')} disabled />
-                  <ProFormText.Password
-                    name='password'
-                    fieldProps={{
-                      size: 'large',
-                      prefix: <LockOutlined className='prefixIcon' />,
-                      statusRender: (value) => {
-                        const getStatus = () => {
-                          if (value && value.length > 10) {
-                            return 'ok';
-                          }
-                          if (value && value.length > 6) {
-                            return 'pass';
-                          }
-                          return 'poor';
-                        };
-                        const status = getStatus();
-                        if (status === 'pass') {
-                          return (
-                            <div style={{ color: token.colorWarning }}>
-                              {t('auth.password_strength_middle')}
-                            </div>
-                          );
-                        }
-                        if (status === 'ok') {
-                          return (
-                            <div style={{ color: token.colorSuccess }}>
-                              {t('auth.password_strength_hight')}
-                            </div>
-                          );
-                        }
+    <Box sx={{ m: 'auto', width: 450 }}>
+      <Stack component='form' onSubmit={handleSubmit(handleFinish)} spacing={2}>
+        <TabContext value={tab}>
+          <Tabs centered value={tab} onChange={(_, key) => setTab(key)}>
+            <Tab value='baseInfo' label={t('user.base_info')} />
+            <Tab value='changePassword' label={t('user.change_password')} />
+          </Tabs>
+          <TabPanel value='baseInfo' sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Controller
+              name='avatar'
+              control={control}
+              render={({ field, fieldState }) => (
+                <FormControl>
+                  <FormLabel htmlFor='avatar'>{t('user.avatar')}</FormLabel>
+                  <FormControl error={!!fieldState.error} fullWidth>
+                    <Spin spinning={isUploading}>
+                      <Avatar
+                        sx={{
+                          width: 120,
+                          height: 120,
+                          boxShadow: 3,
+                          cursor: 'pointer',
+                          m: 'auto',
+                        }}
+                        src={avatarUrl}
+                        onClick={() => {
+                          fileInputRef.current?.click();
+                        }}
+                      />
+                    </Spin>
 
-                        return (
-                          <div style={{ color: token.colorError }}>
-                            {t('auth.password_strength_low')}
-                          </div>
-                        );
-                      },
-                    }}
-                    placeholder={t('auth.input_password')}
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('auth.input_password')}!`,
-                      },
-                    ]}
+                    <input
+                      ref={(el) => {
+                        field.ref(el);
+                        fileInputRef.current = el;
+                      }}
+                      type='file'
+                      name='avatar'
+                      hidden
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file || !validateImg(file)) return;
+                        onUpload(file, {
+                          isPublic: true,
+                        }).then(() => {
+                          field.onChange(file);
+                        });
+                      }}
+                      accept='.jpg,.jpeg,.png,.gif,.webp'
+                    />
+                  </FormControl>
+                </FormControl>
+              )}
+            ></Controller>
+            <Controller
+              name='email'
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <FormControl>
+                    <FormLabel>{t('user.email')}</FormLabel>
+                    <TextField
+                      {...field}
+                      variant='outlined'
+                      type='email'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                      fullWidth
+                      disabled
+                    />
+                  </FormControl>
+                );
+              }}
+            />
+            <Controller
+              name='nickName'
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <FormControl>
+                    <FormLabel htmlFor='nickName'>{t('user.nick_name')}</FormLabel>
+                    <TextField
+                      {...field}
+                      id='nickName'
+                      variant='outlined'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                      fullWidth
+                    />
+                  </FormControl>
+                );
+              }}
+            />
+            <Controller
+              name='mobilePhone'
+              control={control}
+              rules={{
+                pattern: {
+                  value: /^1[3-9]\d{9}$/,
+                  message: t('validate.phone_format_error'),
+                },
+              }}
+              render={({ field, fieldState }) => {
+                return (
+                  <FormControl>
+                    <FormLabel>{t('user.mobile_phone')}</FormLabel>
+                    <TextField
+                      {...field}
+                      id='mobilePhone'
+                      variant='outlined'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                      fullWidth
+                    />
+                  </FormControl>
+                );
+              }}
+            />
+
+            <Controller
+              name='gender'
+              control={control}
+              render={({ field }) => {
+                return (
+                  <FormControl>
+                    <FormLabel htmlFor='gender'>{t('user.gender')}</FormLabel>
+                    <RadioGroup {...field} value={String(field.value)} id='gender' row>
+                      {genderOptions?.map((opt) => (
+                        <FormControlLabel label={opt.label} value={opt.value} control={<Radio />} />
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                );
+              }}
+            />
+
+            <Controller
+              name='remark'
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <FormControl>
+                    <FormLabel htmlFor='remark'>{t('user.remark')}</FormLabel>
+                    <TextField
+                      {...field}
+                      id='remark'
+                      multiline
+                      rows={4}
+                      maxRows={6}
+                      variant='outlined'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                      fullWidth
+                    />
+                  </FormControl>
+                );
+              }}
+            />
+
+            <Button
+              variant='outlined'
+              type='submit'
+              fullWidth
+              loading={updateProfileMutation.isLoading}
+            >
+              {t('user.change_profile_info')}
+            </Button>
+          </TabPanel>
+          <TabPanel
+            value='changePassword'
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
+            <Controller
+              name='email'
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <FormControl>
+                    <FormLabel>{t('user.email')}</FormLabel>
+                    <TextField
+                      {...field}
+                      variant='outlined'
+                      type='email'
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                      fullWidth
+                      disabled
+                    />
+                  </FormControl>
+                );
+              }}
+            />
+            <Controller
+              name='password'
+              control={control}
+              rules={{ required: t('auth.input_new_password') }}
+              render={({ field, fieldState }) => (
+                <FormControl>
+                  <FormLabel htmlFor='password'>{t('auth.new_password')}</FormLabel>
+                  <TextField
+                    {...field}
+                    id='password'
+                    type='password'
+                    fullWidth
+                    placeholder='••••••'
+                    variant='outlined'
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
-                  <ProFormText.Password
-                    name='confirmPassword'
-                    fieldProps={{
-                      size: 'large',
-                      prefix: <LockOutlined className='prefixIcon' />,
-                    }}
-                    placeholder={t('auth.input_confirm_password')}
-                    validateTrigger='onFinish'
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('auth.input_confirm_password')}!`,
-                      },
-                      {
-                        validator: (_, value) => {
-                          const password = formRef.current?.getFieldValue('password');
-                          if (password !== value) {
-                            return Promise.reject();
-                          }
-                          return Promise.resolve();
-                        },
-                        message: t('auth.password_not_same'),
-                      },
-                    ]}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name='confirmPassword'
+              control={control}
+              rules={{
+                required: t('auth.input_confirm_password'),
+                validate: (value) => getValues('password') === value || t('auth.password_not_same'),
+              }}
+              render={({ field, fieldState }) => (
+                <FormControl>
+                  <FormLabel htmlFor='confirmPassword'>{t('auth.confirm_password')}</FormLabel>
+                  <TextField
+                    {...field}
+                    id='confirmPassword'
+                    type='password'
+                    fullWidth
+                    placeholder='••••••'
+                    variant='outlined'
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
-                  <ProFormCaptcha
-                    fieldProps={{
-                      size: 'large',
-                      prefix: <LockOutlined className='prefixIcon' />,
-                    }}
-                    captchaProps={{
-                      size: 'large',
-                    }}
-                    placeholder={t('auth.get_captcha')}
-                    captchaTextRender={(timing, count) => {
-                      if (timing) {
-                        return `${count} ${t('auth.get_captcha')}`;
-                      }
-                      return t('auth.get_captcha');
-                    }}
-                    name='captcha'
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('auth.input_captcha')}!`,
-                      },
-                    ]}
-                    phoneName='email'
-                    onGetCaptcha={async (email) => {
-                      getCaptchaQuery
-                        .mutateAsync({
-                          email,
-                        })
-                        .then(() => message.success(t('auth.get_captcha_success')));
-                    }}
-                  />
-                </>
-              ),
-            },
-          ]}
-        ></Tabs>
-      </ProForm>
-    </div>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name='captcha'
+              control={control}
+              rules={{ required: t('auth.input_captcha') }}
+              render={({ field, fieldState }) => (
+                <Stack spacing={0}>
+                  <FormLabel htmlFor='captcha'>{t('auth.captcha')}</FormLabel>
+                  <FormControl error={!!fieldState.error}>
+                    <Box sx={{ display: 'flex', alignItems: 'stretch', columnGap: 2 }}>
+                      <TextField
+                        {...field}
+                        fullWidth
+                        id='captcha'
+                        placeholder={t('auth.input_captcha')}
+                        variant='outlined'
+                      />
+                      <Button
+                        sx={{ whiteSpace: 'nowrap', width: 200 }}
+                        variant='outlined'
+                        onClick={handleSendCaptcha}
+                        disabled={countdown !== 0}
+                        size='large'
+                      >
+                        {t('auth.get_captcha')}
+                        {countdown !== 0 ? `(${Math.round(countdown / 1000)})` : ''}
+                      </Button>
+                    </Box>
+                    {fieldState.error?.message && (
+                      <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                    )}
+                  </FormControl>
+                </Stack>
+              )}
+            />
+            <Button
+              variant='outlined'
+              type='submit'
+              fullWidth
+              loading={changePasswordMutation.isLoading}
+            >
+              {t('user.change_password')}
+            </Button>
+            <Button
+              variant='outlined'
+              fullWidth
+              onClick={() => toast.success(`${t('tip.change_password_success')}!`)}
+            >
+              {t('user.change_password')}
+            </Button>
+          </TabPanel>
+        </TabContext>
+      </Stack>
+    </Box>
   );
 };
 

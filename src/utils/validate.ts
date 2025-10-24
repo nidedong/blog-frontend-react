@@ -1,8 +1,7 @@
 import { message } from 'antd';
-import type { RcFile } from 'antd/es/upload/interface';
 import i18n from './i18n';
 
-export const validateImg = (file: RcFile) => {
+export const validateImg = (file: File) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
   if (!isJpgOrPng) {
     message.error(`${i18n.t('tip.img_is_not_jpg_or_png')}!`);

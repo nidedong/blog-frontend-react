@@ -25,4 +25,5 @@
   "i18n-ally.enabledFrameworks": [ // 指定框架
     "react"
   ],
+  "typescript.tsdk": "node_modules/typescript/lib",
 }

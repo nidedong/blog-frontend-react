@@ -1,4 +1,5 @@
 import { getToken, setToken } from '@/utils';
+import Box from '@mui/material/Box';
 import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +27,7 @@ const AuthLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   if (!token && !access_token) return <Navigate replace to='/user/login' />;
 
-  return <div>{children}</div>;
+  return <Box sx={{ height: '100%' }}>{children}</Box>;
 };
 
 export default AuthLayout;

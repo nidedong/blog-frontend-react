@@ -1,7 +1,9 @@
 import 'axios';
+// 自定义mui主体变量
+// import '@mui/material/styles';
 
 declare module 'axios' {
-  export interface AxiosRequestConfig<> {
+  export interface AxiosRequestConfig {
     /** 返回response.data.data，默认为true */
     flatData?: boolean;
     /** 返回response */
@@ -10,5 +12,12 @@ declare module 'axios' {
     silent?: boolean;
     /** 是否携带token，用于部分外部请求方法 */
     useToken?: boolean;
+  }
+}
+
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    // custom?: string;
+    // section?: string;
   }
 }

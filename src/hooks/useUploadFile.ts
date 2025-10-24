@@ -4,7 +4,6 @@ import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RcFile } from 'antd/es/upload';
 
 const useUploadFile = () => {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
@@ -15,7 +14,7 @@ const useUploadFile = () => {
 
   const onUpload = useMemoizedFn(
     async (
-      file: RcFile,
+      file: File,
       opts?: {
         isPublic?: boolean;
       }

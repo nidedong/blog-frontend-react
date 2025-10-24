@@ -1,25 +1,50 @@
-import { LockOutlined, MailOutlined, ReadOutlined } from '@ant-design/icons';
-import {
-  LoginForm,
-  ProConfigProvider,
-  ProFormCaptcha,
-  ProFormInstance,
-  ProFormText,
-} from '@ant-design/pro-components';
-import { message, theme, Typography } from 'antd';
+import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { encryptPassword, regex } from '@/utils';
+import { encryptPassword } from '@/utils';
 import { NavLink, useNavigate } from 'react-router';
 import { useMutation } from 'react-query';
 import { registerAccountApi, getCaptchaApi, IRegisterAccountParams } from './service';
-import styles from './index.module.less';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { omit } from 'lodash-es';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import FormLabel from '@mui/material/FormLabel';
+import { Controller, useForm } from 'react-hook-form';
+import { useCountDown } from 'ahooks';
+import Card from '../components/Card';
+import { LogoIcon } from '@/components';
+import Container from '../components/Container';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 
-const Login = () => {
-  const { token } = theme.useToken();
-  const formRef = useRef<ProFormInstance>();
+export interface FormValues {
+  email: string;
+  captcha?: string;
+  password?: string;
+  confirmPassword?: string;
+}
+
+const Register = () => {
   const { t } = useTranslation();
+
+  const [targetDate, setTargetDate] = useState<number>(0);
+
+  const [countdown] = useCountDown({
+    targetDate,
+  });
+
+  const { getValues, control, handleSubmit, trigger } = useForm<FormValues>({
+    defaultValues: {
+      email: '',
+      captcha: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
   const navigate = useNavigate();
 
   const registerAccountQuery = useMutation(registerAccountApi);
@@ -27,7 +52,7 @@ const Login = () => {
 
   const loading = registerAccountQuery.isLoading || getCaptchaQuery.isLoading;
 
-  const handleFinish = (formData) => {
+  const onSubmit = (formData) => {
     if (formData.password) {
       formData.password = encryptPassword(formData.password);
     }
@@ -38,151 +63,154 @@ const Login = () => {
       });
   };
 
-  return (
-    <ProConfigProvider hashed={false}>
-      <div className={styles.register} style={{ backgroundColor: token.colorBgContainer }}>
-        <LoginForm
-          formRef={formRef}
-          logo={<ReadOutlined style={{ fontSize: 50 }} />}
-          // title={t('auth.title')}
-          submitter={{
-            searchConfig: { submitText: t('auth.register'), resetText: t('auth.reset') },
-          }}
-          onFinish={handleFinish}
-          loading={loading}
-        >
-          <Typography.Title level={3} className={styles.title}>
-            {t('auth.register_account')}
-          </Typography.Title>
-          <ProFormText
-            fieldProps={{
-              size: 'large',
-              prefix: <MailOutlined className={'prefixIcon'} />,
-            }}
-            name='email'
-            placeholder={t('auth.input_email')}
-            rules={[
-              {
-                required: true,
-                message: `${t('auth.input_email')}!`,
-              },
-              {
-                pattern: regex.email,
-                message: `${t('auth.email_format_error')}`,
-              },
-            ]}
-          />
-          <ProFormText.Password
-            name='password'
-            fieldProps={{
-              size: 'large',
-              prefix: <LockOutlined className='prefixIcon' />,
-              statusRender: (value) => {
-                const getStatus = () => {
-                  if (value && value.length > 10) {
-                    return 'ok';
-                  }
-                  if (value && value.length > 6) {
-                    return 'pass';
-                  }
-                  return 'poor';
-                };
-                const status = getStatus();
-                if (status === 'pass') {
-                  return (
-                    <div style={{ color: token.colorWarning }}>
-                      {t('auth.password_strength_middle')}
-                    </div>
-                  );
-                }
-                if (status === 'ok') {
-                  return (
-                    <div style={{ color: token.colorSuccess }}>
-                      {t('auth.password_strength_hight')}
-                    </div>
-                  );
-                }
+  const handleSendCaptcha = async () => {
+    const isValid = await trigger('email');
+    if (!isValid) return;
+    const email = getValues('email');
+    setTargetDate(Date.now() + 60000);
+    getCaptchaQuery
+      .mutateAsync({
+        email,
+      })
+      .then(() => message.success(t('auth.get_captcha_success')));
+  };
 
-                return (
-                  <div style={{ color: token.colorError }}>{t('auth.password_strength_low')}</div>
-                );
-              },
-            }}
-            placeholder={t('auth.input_password')}
-            rules={[
-              {
-                required: true,
-                message: `${t('auth.input_password')}!`,
-              },
-            ]}
+  return (
+    <Container>
+      <Card variant='outlined'>
+        <LogoIcon />
+        <Typography variant='h4' sx={{ fontWeight: 500 }}>
+          {t('auth.register_account')}
+        </Typography>
+
+        <Box
+          component='form'
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
+          <Controller
+            name='email'
+            control={control}
+            rules={{ required: t('auth.input_email') }}
+            render={({ field, fieldState }) => (
+              <FormControl>
+                <FormLabel htmlFor='email'>{t('auth.email')}</FormLabel>
+                <TextField
+                  {...field}
+                  type='email'
+                  placeholder='your@email.com'
+                  id='email'
+                  fullWidth
+                  variant='outlined'
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              </FormControl>
+            )}
           />
-          <ProFormText.Password
+          <Controller
+            name='password'
+            control={control}
+            rules={{ required: t('auth.input_password') }}
+            render={({ field, fieldState }) => (
+              <FormControl>
+                <FormLabel htmlFor='password'>{t('auth.password')}</FormLabel>
+                <TextField
+                  {...field}
+                  id='password'
+                  type='password'
+                  fullWidth
+                  placeholder='••••••'
+                  variant='outlined'
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              </FormControl>
+            )}
+          />
+          <Controller
             name='confirmPassword'
-            fieldProps={{
-              size: 'large',
-              prefix: <LockOutlined className='prefixIcon' />,
+            control={control}
+            rules={{
+              required: t('auth.input_confirm_password'),
+              validate: (value) => getValues('password') === value || t('auth.password_not_same'),
             }}
-            placeholder={t('auth.input_confirm_password')}
-            validateTrigger='onFinish'
-            rules={[
-              {
-                required: true,
-                message: `${t('auth.input_confirm_password')}!`,
-              },
-              {
-                validator: (_, value) => {
-                  const password = formRef.current?.getFieldValue('password');
-                  if (password !== value) {
-                    return Promise.reject();
-                  }
-                  return Promise.resolve();
-                },
-                message: t('auth.password_not_same'),
-              },
-            ]}
+            render={({ field, fieldState }) => (
+              <FormControl>
+                <FormLabel htmlFor='confirmPassword'>{t('auth.confirm_password')}</FormLabel>
+                <TextField
+                  {...field}
+                  id='confirmPassword'
+                  type='password'
+                  fullWidth
+                  placeholder='••••••'
+                  variant='outlined'
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              </FormControl>
+            )}
           />
-          <ProFormCaptcha
-            fieldProps={{
-              size: 'large',
-              prefix: <LockOutlined className='prefixIcon' />,
-            }}
-            captchaProps={{
-              size: 'large',
-            }}
-            placeholder={t('auth.get_captcha')}
-            captchaTextRender={(timing, count) => {
-              if (timing) {
-                return `${count} ${t('auth.get_captcha')}`;
-              }
-              return t('auth.get_captcha');
-            }}
+          <Controller
             name='captcha'
-            rules={[
-              {
-                required: true,
-                message: `${t('auth.input_captcha')}!`,
-              },
-            ]}
-            phoneName='email'
-            onGetCaptcha={async (email) => {
-              getCaptchaQuery
-                .mutateAsync({
-                  email,
-                })
-                .then(() => message.success(t('auth.get_captcha_success')));
-            }}
+            control={control}
+            rules={{ required: t('auth.input_captcha') }}
+            render={({ field, fieldState }) => (
+              <div>
+                <FormLabel htmlFor='captcha'>{t('auth.captcha')}</FormLabel>
+                <FormControl error={!!fieldState.error}>
+                  <Box sx={{ display: 'flex', alignItems: 'stretch', columnGap: 2, mt: 1 }}>
+                    <TextField
+                      {...field}
+                      fullWidth
+                      id='captcha'
+                      placeholder={t('auth.input_captcha')}
+                      variant='outlined'
+                    />
+                    <Button
+                      sx={{ whiteSpace: 'nowrap', width: 200 }}
+                      variant='outlined'
+                      onClick={handleSendCaptcha}
+                      disabled={countdown !== 0}
+                      size='large'
+                    >
+                      {t('auth.get_captcha')}
+                      {countdown !== 0 ? `(${Math.round(countdown / 1000)})` : ''}
+                    </Button>
+                  </Box>
+                  {fieldState.error?.message && (
+                    <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                  )}
+                </FormControl>
+              </div>
+            )}
           />
-          <div
-            style={{
-              marginBlockEnd: 24,
-            }}
+
+          <Button size='large' loading={loading} type='submit' variant='contained' fullWidth>
+            {t('auth.register')}
+          </Button>
+        </Box>
+
+        <Box className='flex items-center justify-between' sx={{ mt: 2 }}>
+          <Typography variant='body2'>
+            {t('auth.already_have_account')}？{' '}
+            <Link component={NavLink} to='/user/login' color='primary' underline='hover'>
+              {t('auth.go_to_login')}
+            </Link>
+          </Typography>
+          <Link
+            component={NavLink}
+            to='/user/forget'
+            underline='hover'
+            variant='body2'
+            color='primary'
           >
-            <NavLink to='/user/login'>{t('auth.login')}</NavLink>
-          </div>
-        </LoginForm>
-      </div>
-    </ProConfigProvider>
+            {t('auth.froget_password')}？
+          </Link>
+        </Box>
+      </Card>
+    </Container>
   );
 };
 
-export default Login;
+export default Register;
