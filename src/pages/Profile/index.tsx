@@ -43,7 +43,7 @@ const Profile: React.FC = () => {
   const { t } = useTranslation();
   const [targetDate, setTargetDate] = useState<number>(0);
 
-  const { handleSubmit, control, getValues, trigger, setValue, reset } = useForm<IFormValues>();
+  const { handleSubmit, control, getValues, trigger, reset } = useForm<IFormValues>();
 
   const profileQuery = useProfile();
 

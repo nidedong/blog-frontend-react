@@ -1,5 +1,4 @@
 import React from 'react';
-import { type RouteObject } from 'react-router';
 
 export enum SorterEnum {
   DESC = -1,

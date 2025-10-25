@@ -1,4 +1,3 @@
-import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem, { ListItemProps } from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
