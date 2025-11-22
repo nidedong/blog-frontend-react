@@ -2,6 +2,8 @@ import AuthLayout from '@/layouts/AuthLayout';
 import BasicLayout from '@/layouts/BasicLayout';
 import Home from '@/pages/Home';
 import React from '@/pages/React';
+import ChatRoom from '@/pages/React/ChatRoom';
+import ChatRoomRoutes from '@/pages/React/ChatRoom/routes';
 import ThreeJs from '@/pages/ThreeJs';
 import Profile from '@/pages/Profile';
 import i18n from '@/utils/i18n';
@@ -41,14 +43,16 @@ const mainRoutes: RouteObject[] = [
         children: [
           {
             index: true,
-            element: <Navigate replace to='/react/react1' />,
+            element: <Navigate replace to='chatroom' />,
           },
           {
-            path: 'react1',
+            path: 'chatroom',
             handle: {
-              name: 'react1',
+              name: i18n.t('route.chat_room'),
+              hideChildrenInMenu: true,
             },
-            Component: React,
+            Component: ChatRoom,
+            children: ChatRoomRoutes,
           },
           {
             path: 'react2',
@@ -65,7 +69,7 @@ const mainRoutes: RouteObject[] = [
             children: [
               {
                 index: true,
-                element: <Navigate replace to='/react/react3/react2' />,
+                element: <Navigate replace to='react2' />,
               },
               {
                 path: 'react2',

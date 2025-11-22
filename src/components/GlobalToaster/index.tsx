@@ -1,12 +1,11 @@
 import { ToasterProps, Toaster } from 'react-hot-toast';
 import React from 'react';
-import { useColorScheme, useTheme, type Palette } from '@mui/material/styles';
+import { useColorScheme, useTheme } from '@mui/material/styles';
 
 const GlobalToaster: React.FC<ToasterProps> = () => {
-  const { mode } = useColorScheme();
   const theme = useTheme();
-
-  const palette: Palette = (theme as any).colorSchemes?.[mode!]?.palette ?? theme.palette;
+  const { mode } = useColorScheme();
+  const palette = theme.vars?.palette || theme.palette;
 
   return (
     <Toaster

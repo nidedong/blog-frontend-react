@@ -6,11 +6,12 @@ interface IResType<D = unknown> {
   data?: D;
 }
 
+interface IResPaginationData<D = unknown> {
+  list: D[];
+  total: number;
+}
 interface IResPaginationType<D = unknown> extends IResType {
-  data?: {
-    list: D[];
-    total: number;
-  };
+  data?: IResPaginationData<D>;
 }
 
 interface IReqPaginationParams {

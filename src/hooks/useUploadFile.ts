@@ -1,15 +1,21 @@
 import { finishedUploadApi, getPresignedUploadUrlApi, uploadFileApi } from '@/services';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useMemoizedFn } from 'ahooks';
-import { message } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-hot-toast';
 
 const useUploadFile = () => {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
-  const presignedUploadUrlMutation = useMutation(getPresignedUploadUrlApi);
-  const uploadFileMutation = useMutation(uploadFileApi);
-  const finishedUploadMutation = useMutation(finishedUploadApi);
+  const presignedUploadUrlMutation = useMutation({
+    mutationFn: getPresignedUploadUrlApi,
+  });
+  const uploadFileMutation = useMutation({
+    mutationFn: uploadFileApi,
+  });
+  const finishedUploadMutation = useMutation({
+    mutationFn: finishedUploadApi,
+  });
   const { t } = useTranslation();
 
   const onUpload = useMemoizedFn(
@@ -39,13 +45,13 @@ const useUploadFile = () => {
         setFileUrl(fileInfo.signUrl);
       } catch (error) {
         console.log('🚀 ~ useUploadFile ~ error:', error);
-        message.error(`${t('file.upload_file_failed')}!`);
+        toast.error(`${t('file.upload_file_failed')}!`);
       }
     }
   );
 
   return {
-    isLoading: presignedUploadUrlMutation.isLoading || uploadFileMutation.isLoading,
+    isLoading: presignedUploadUrlMutation.isPending || uploadFileMutation.isPending,
     isError: presignedUploadUrlMutation.isError || uploadFileMutation.isError,
     onUpload,
     fileUrl,

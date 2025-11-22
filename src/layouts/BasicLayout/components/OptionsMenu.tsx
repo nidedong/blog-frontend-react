@@ -9,7 +9,7 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { logoutApi } from '@/services';
 import { setToken, toLogin } from '@/utils';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,8 @@ export default function OptionsMenu() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const logoutMutate = useMutation(logoutApi, {
+  const logoutMutate = useMutation({
+    mutationFn: logoutApi,
     onSuccess() {
       setToken(undefined);
       toLogin();

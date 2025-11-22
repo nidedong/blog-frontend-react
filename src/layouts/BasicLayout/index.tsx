@@ -34,7 +34,7 @@ const BasicLayout: React.FC = () => {
         })}
       >
         <Header />
-        <Box sx={{ flex: 1, flexGrow: 1, overflow: 'auto' }}>
+        <Box sx={{ flex: 1, flexGrow: 1, overflowY: 'auto' }}>
           <Outlet />
         </Box>
       </Box>

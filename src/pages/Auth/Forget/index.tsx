@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { encryptPassword } from '@/utils';
 import { NavLink, useNavigate } from 'react-router';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { forgetPasswordApi, getCaptchaApi, IForgetPasswordParams } from './service';
 import { useState } from 'react';
 import { omit } from 'lodash-es';
@@ -47,10 +47,14 @@ const Forget = () => {
 
   const navigate = useNavigate();
 
-  const forgetPasswordQuery = useMutation(forgetPasswordApi);
-  const getCaptchaQuery = useMutation(getCaptchaApi);
+  const forgetPasswordQuery = useMutation({
+    mutationFn: forgetPasswordApi,
+  });
+  const getCaptchaQuery = useMutation({
+    mutationFn: getCaptchaApi,
+  });
 
-  const loading = forgetPasswordQuery.isLoading || getCaptchaQuery.isLoading;
+  const loading = forgetPasswordQuery.isPending || getCaptchaQuery.isPending;
 
   const onSubmit = (formData) => {
     if (formData.password) {

@@ -14,6 +14,7 @@ interface ImportMetaEnv {
   readonly VITE_API_BASEURL: string;
   readonly VITE_API_TIMEOUT: string;
   readonly VITE_SERVICE_URL: string;
+  readonly VITE_WEBSOCKET_URL: string;
 }
 
 interface ImportMeta {

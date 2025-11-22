@@ -20,11 +20,6 @@ export const dataDisplayCustomizations: Components<Theme> = {
   MuiListItem: {
     styleOverrides: {
       root: ({ theme }) => ({
-        [`& .${svgIconClasses.root}`]: {
-          width: '1rem',
-          height: '1rem',
-          color: (theme.vars || theme).palette.text.secondary,
-        },
         [`& .${typographyClasses.root}`]: {
           fontWeight: 500,
         },
@@ -227,6 +222,12 @@ export const dataDisplayCustomizations: Components<Theme> = {
           },
         ],
       },
+    },
+  },
+  MuiTooltip: {
+    defaultProps: {
+      arrow: true,
+      placement: 'top',
     },
   },
 };

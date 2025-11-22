@@ -1,3 +1,4 @@
+import { SocketsManagerProvider } from '@/sockets';
 import { getToken, setToken } from '@/utils';
 import Box from '@mui/material/Box';
 import { message } from 'antd';
@@ -27,7 +28,11 @@ const AuthLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   if (!token && !access_token) return <Navigate replace to='/user/login' />;
 
-  return <Box sx={{ height: '100%' }}>{children}</Box>;
+  return (
+    <SocketsManagerProvider>
+      <Box sx={{ height: '100%' }}>{children}</Box>
+    </SocketsManagerProvider>
+  );
 };
 
 export default AuthLayout;

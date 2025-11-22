@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGlobalState } from '@/stores/global';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { omit } from 'lodash-es';
 import { genderOptions } from '@/constants';
 import TabPanel from '@mui/lab/TabPanel';
@@ -51,14 +51,16 @@ const Profile: React.FC = () => {
     targetDate,
   });
 
-  const changePasswordMutation = useMutation(changePasswordApi, {
+  const changePasswordMutation = useMutation({
+    mutationFn: changePasswordApi,
     onSuccess() {
       toast.success(`${t('tip.change_password_success')}!`);
       logout();
     },
   });
 
-  const updateProfileMutation = useMutation(updateProfileApi, {
+  const updateProfileMutation = useMutation({
+    mutationFn: updateProfileApi,
     onSuccess() {
       profileQuery.refetch();
     },
@@ -71,7 +73,9 @@ const Profile: React.FC = () => {
     setFileUrl: setAvatarUrl,
   } = useUploadFile();
 
-  const getCaptchaQuery = useMutation(getCaptchaApi);
+  const getCaptchaQuery = useMutation({
+    mutationFn: getCaptchaApi,
+  });
 
   useEffect(() => {
     if (user) {

@@ -11,7 +11,7 @@ export const loginByEmailApi = (
   accessToken: string;
 }> =>
   request({
-    url: '/user/login/email',
+    url: '/auth/login/email',
     method: 'post',
     data,
   });
@@ -27,7 +27,7 @@ export const loginByCaptchaApi = (
   accessToken: string;
 }> =>
   request({
-    url: '/user/login/captcha',
+    url: '/auth/login/captcha',
     method: 'post',
     data,
   });

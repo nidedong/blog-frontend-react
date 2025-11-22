@@ -8,7 +8,7 @@ export interface IForgetPasswordParams {
 
 export const forgetPasswordApi = (data: IForgetPasswordParams): Promise<IResType> =>
   request({
-    url: '/user/forgetpassword',
+    url: '/auth/forgetpassword',
     method: 'put',
     data,
   });

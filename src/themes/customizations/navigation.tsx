@@ -178,7 +178,7 @@ export const navigationCustomizations: Components<Theme> = {
       indicator: ({ theme }) => ({
         backgroundColor: (theme.vars || theme).palette.grey[800],
         ...theme.applyStyles('dark', {
-          backgroundColor: (theme.vars || theme).palette.grey[200],
+          backgroundColor: (theme.vars || theme).palette.primary.main,
         }),
       }),
     },
@@ -208,7 +208,7 @@ export const navigationCustomizations: Components<Theme> = {
             backgroundColor: gray[800],
           },
           [`&.${tabClasses.selected}`]: {
-            color: '#fff',
+            color: (theme.vars || theme).palette.primary.main,
           },
         }),
       }),

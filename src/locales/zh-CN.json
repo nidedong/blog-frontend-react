@@ -1,13 +1,16 @@
 {
   "app": {
-    "title": "网站标题"
+    "title": "标题",
+    "no_data": "暂时没有内容"
   },
   "route": {
     "home": "概览",
     "user_center": "个人中心",
     "react": "React",
     "three_js": "Three.js",
-    "vue_js": "Vue.js"
+    "vue_js": "Vue.js",
+    "chat_room": "聊天室",
+    "chat_room_friend": "好友"
   },
   "auth": {
     "title": "登录您的账号",
@@ -59,19 +62,31 @@
     "nick_name": "昵称",
     "profile": "个人中心",
     "logout": "退出登录",
-    "setting": "个人设置"
+    "setting": "个人设置", 
+    "add_friend": "添加好友",
+    "add_friend_by_name": "您可以通过搜索用户名添加好友",
+    "send_add_friend_req": "发送好友申请",
+    "add_friend_req_sent": "好友请求已发送",
+    "friends_total": "好友总数",
+    "friends_req_total": "发送",
+    "friends_receive_total": "接收"
   },
   "options": {
     "gender_man": "男",
     "gender_woman": "女",
     "theme_system": "跟随系统",
     "theme_light": "浅色主题",
-    "theme_dark": "黑暗主题"
+    "theme_dark": "黑暗主题",
+    "all": "全部",
+    "undetermined":"待定"
   },
   "tip": {
     "img_is_not_jpg_or_png": "上传图片不是jpg或者png类型",
     "img_is_not_lessthan_2mb": "上传图片必须小于2MB",
-    "change_password_success": "修改密码成功，请重新登录"
+    "change_password_success": "修改密码成功，请重新登录",
+    "no_more_data": "没有更多数据了",
+    "maximum_show_count_is": "最大展示数量为",
+    "plz_input_exact_keyword": "请输入更精确的关键词"
   },
   "validate": {
     "phone_format_error": "手机格式错误"
@@ -81,5 +96,24 @@
   },
   "exception": {
     "server_error": "服务器错误"
+  },
+  "notify": {
+    "inbox": "收件箱",
+    "notification": "通知",
+    "unread_message": "未读信息",
+    "view_friends_req": "查看好友请求"
+  },
+  "action": {
+    "expand": "展开",
+    "mark_read": "标记为已读",
+    "cancel": "取消",
+    "confirm": "确认",
+    "search": "搜索",
+    "agree": "同意",
+    "reject": "拒绝"
+  },
+  "chat": {
+    "create_conversation": "创建聊天",
+    "title": "聊天"
   }
 }

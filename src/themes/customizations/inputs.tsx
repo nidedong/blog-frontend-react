@@ -51,68 +51,6 @@ export const inputsCustomizations: Components<Theme> = {
           },
           {
             props: {
-              color: 'primary',
-              variant: 'contained',
-            },
-            style: {
-              color: 'white',
-              backgroundColor: gray[900],
-              backgroundImage: `linear-gradient(to bottom, ${gray[700]}, ${gray[800]})`,
-              boxShadow: `inset 0 1px 0 ${gray[600]}, inset 0 -1px 0 1px hsl(220, 0%, 0%)`,
-              border: `1px solid ${gray[700]}`,
-              '&:hover': {
-                backgroundImage: 'none',
-                backgroundColor: gray[700],
-                boxShadow: 'none',
-              },
-              '&:active': {
-                backgroundColor: gray[800],
-              },
-              ...theme.applyStyles('dark', {
-                color: 'black',
-                backgroundColor: gray[50],
-                backgroundImage: `linear-gradient(to bottom, ${gray[100]}, ${gray[50]})`,
-                boxShadow: 'inset 0 -1px 0  hsl(220, 30%, 80%)',
-                border: `1px solid ${gray[50]}`,
-                '&:hover': {
-                  backgroundImage: 'none',
-                  backgroundColor: gray[300],
-                  boxShadow: 'none',
-                },
-                '&:active': {
-                  backgroundColor: gray[400],
-                },
-              }),
-            },
-          },
-          {
-            props: {
-              color: 'secondary',
-              variant: 'contained',
-            },
-            style: {
-              color: 'white',
-              backgroundColor: brand[300],
-              backgroundImage: `linear-gradient(to bottom, ${alpha(brand[400], 0.8)}, ${
-                brand[500]
-              })`,
-              boxShadow: `inset 0 2px 0 ${alpha(brand[200], 0.2)}, inset 0 -2px 0 ${alpha(
-                brand[700],
-                0.4
-              )}`,
-              border: `1px solid ${brand[500]}`,
-              '&:hover': {
-                backgroundColor: brand[700],
-                boxShadow: 'none',
-              },
-              '&:active': {
-                backgroundColor: brand[700],
-                backgroundImage: 'none',
-              },
-            },
-          },
-          {
-            props: {
               variant: 'outlined',
             },
             style: {
@@ -299,7 +237,6 @@ export const inputsCustomizations: Components<Theme> = {
   MuiToggleButton: {
     styleOverrides: {
       root: ({ theme }) => ({
-        padding: '12px 16px',
         textTransform: 'none',
         borderRadius: '10px',
         fontWeight: 500,

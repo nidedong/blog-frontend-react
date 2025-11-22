@@ -28,5 +28,6 @@ export interface RouteObjectHandle {
   icon?: React.ReactNode;
   name?: string;
   hideInMenu?: boolean;
+  hideChildrenInMenu?: boolean;
   to?: string;
 }

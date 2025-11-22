@@ -1,5 +1,5 @@
-const Home = () => {
+const ChatRoom = () => {
   return <>react</>;
 };
 
-export default Home;
+export default ChatRoom;

@@ -8,7 +8,7 @@ export interface IRegisterAccountParams {
 
 export const registerAccountApi = (data: IRegisterAccountParams): Promise<IResType> =>
   request({
-    url: '/user/register',
+    url: '/auth/register',
     method: 'post',
     data,
   });

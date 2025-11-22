@@ -23,7 +23,11 @@ const renderMenuList = (routes: RouteObject[] | undefined) => {
           (child) => !!child.path && !child.handle?.hideInMenu
         );
 
-        if (!effectiveChildren || effectiveChildren.length === 0) {
+        if (
+          !effectiveChildren ||
+          effectiveChildren.length === 0 ||
+          route.handle?.hideChildrenInMenu
+        ) {
           if (!route.path) {
             return null;
           } else {
@@ -60,7 +64,11 @@ const MenuRender: React.FC<{
     <ListItem onClick={handleClick} key={route.path} disablePadding sx={{ display: 'block' }}>
       <ListItemButton selected={selected}>
         {!!handle?.icon && <ListItemIcon>{handle.icon}</ListItemIcon>}
-        <ListItemText primary={handle?.name} />
+        <ListItemText
+          disableTypography
+          primary={handle?.name}
+          style={{ fontSize: 16, fontWeight: 600 }}
+        />
         {extra}
       </ListItemButton>
     </ListItem>
@@ -69,7 +77,11 @@ const MenuRender: React.FC<{
 
 const CollapseMenuRender: React.FC<{ route: RouteObject }> = ({ route }) => {
   const handle: RouteObjectHandle = route.handle;
-  const [open, setOpen] = useState(false);
+  const matches = useMatches();
+
+  const expanded =
+    !!route.handle?.to && matches.map((match) => match.pathname).includes(route.handle.to);
+  const [open, setOpen] = useState(expanded);
 
   if (handle.hideInMenu) return null;
 
@@ -83,7 +95,7 @@ const CollapseMenuRender: React.FC<{ route: RouteObject }> = ({ route }) => {
       />
 
       <Collapse in={open} timeout='auto'>
-        <List component='div' disablePadding>
+        <List component='div' disablePadding sx={{ gap: 0.5 }}>
           {renderMenuList(route.children)}
         </List>
       </Collapse>
@@ -98,7 +110,9 @@ export default function MenuContent() {
 
   return (
     <Stack sx={{ flexGrow: 1, p: 1 }}>
-      <List dense>{renderMenuList(mainRoute?.children)}</List>
+      <List dense sx={{ p: 0, gap: 0.5 }}>
+        {renderMenuList(mainRoute?.children)}
+      </List>
     </Stack>
   );
 }

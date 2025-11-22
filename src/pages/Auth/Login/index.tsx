@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { encryptPassword, setToken, toHome } from '@/utils';
 import { NavLink } from 'react-router';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { getCaptchaApi, loginByCaptchaApi, loginByEmailApi } from './service';
 import { Controller, useForm } from 'react-hook-form';
 import Box from '@mui/material/Box';
@@ -46,23 +46,27 @@ const Login = () => {
     },
   });
 
-  const loginByEmailQuery = useMutation(loginByEmailApi, {
+  const loginByEmailQuery = useMutation({
+    mutationFn: loginByEmailApi,
     onSuccess(res) {
       setToken(res.accessToken);
       toHome();
     },
   });
 
-  const loginByCaptchaQuery = useMutation(loginByCaptchaApi, {
+  const loginByCaptchaQuery = useMutation({
+    mutationFn: loginByCaptchaApi,
     onSuccess(res) {
       setToken(res.accessToken);
       toHome();
     },
   });
 
-  const getCaptchaQuery = useMutation(getCaptchaApi);
+  const getCaptchaQuery = useMutation({
+    mutationFn: getCaptchaApi,
+  });
 
-  const loading = loginByEmailQuery.isLoading || loginByCaptchaQuery.isLoading;
+  const loading = loginByEmailQuery.isPending || loginByCaptchaQuery.isPending;
 
   const onSubmit = (formData: FormValues) => {
     if (loginType === 'email') {
@@ -251,7 +255,7 @@ const Login = () => {
             <Button
               fullWidth
               variant='outlined'
-              href='/api/user/login/google'
+              href='/api/auth/login/google'
               startIcon={<GoogleIcon />}
             >
               {t('auth.login_by_google')}
@@ -259,7 +263,7 @@ const Login = () => {
             <Button
               fullWidth
               variant='outlined'
-              href='/api/user/login/github'
+              href='/api/auth/login/github'
               startIcon={<GithubIcon />}
             >
               {t('auth.login_by_github')}

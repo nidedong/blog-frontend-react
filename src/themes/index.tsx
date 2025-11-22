@@ -14,7 +14,7 @@ import { ThemeMode } from './utils';
 
 const theme = createTheme({
   cssVariables: {
-    colorSchemeSelector: 'data-mui-color-scheme',
+    colorSchemeSelector: 'data',
   },
   colorSchemes,
   typography,

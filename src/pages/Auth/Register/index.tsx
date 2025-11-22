@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { encryptPassword } from '@/utils';
 import { NavLink, useNavigate } from 'react-router';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { registerAccountApi, getCaptchaApi, IRegisterAccountParams } from './service';
 import { useState } from 'react';
 import { omit } from 'lodash-es';
@@ -47,10 +47,14 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const registerAccountQuery = useMutation(registerAccountApi);
-  const getCaptchaQuery = useMutation(getCaptchaApi);
+  const registerAccountQuery = useMutation({
+    mutationFn: registerAccountApi,
+  });
+  const getCaptchaQuery = useMutation({
+    mutationFn: getCaptchaApi,
+  });
 
-  const loading = registerAccountQuery.isLoading || getCaptchaQuery.isLoading;
+  const loading = registerAccountQuery.isPending || getCaptchaQuery.isPending;
 
   const onSubmit = (formData) => {
     if (formData.password) {
