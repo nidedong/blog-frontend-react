@@ -9,6 +9,9 @@ import Loading from './Loading';
 import ToogleButtonList from './ToogleButtonList';
 import Modal from './Modal';
 import IconWrap from './IconWrap';
+import BadgeCount from './BadgeCount';
+import UserStatus from './UserStatus';
+import ActiveIcon from './ActiveIcon';
 
 export {
   SwitchLanguage,
@@ -22,6 +25,9 @@ export {
   Loading,
   Modal,
   IconWrap,
+  BadgeCount,
+  UserStatus,
+  ActiveIcon,
 };
 
 export * from './Icons';

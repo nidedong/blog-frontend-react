@@ -62,14 +62,16 @@
     "nick_name": "昵称",
     "profile": "个人中心",
     "logout": "退出登录",
-    "setting": "个人设置", 
+    "setting": "个人设置",
     "add_friend": "添加好友",
     "add_friend_by_name": "您可以通过搜索用户名添加好友",
     "send_add_friend_req": "发送好友申请",
     "add_friend_req_sent": "好友请求已发送",
     "friends_total": "好友总数",
     "friends_req_total": "发送",
-    "friends_receive_total": "接收"
+    "friends_receive_total": "接收",
+    "online": "在线",
+    "offline": "离线"
   },
   "options": {
     "gender_man": "男",
@@ -78,7 +80,7 @@
     "theme_light": "浅色主题",
     "theme_dark": "黑暗主题",
     "all": "全部",
-    "undetermined":"待定"
+    "undetermined": "待定"
   },
   "tip": {
     "img_is_not_jpg_or_png": "上传图片不是jpg或者png类型",
@@ -86,7 +88,8 @@
     "change_password_success": "修改密码成功，请重新登录",
     "no_more_data": "没有更多数据了",
     "maximum_show_count_is": "最大展示数量为",
-    "plz_input_exact_keyword": "请输入更精确的关键词"
+    "plz_input_exact_keyword": "请输入更精确的关键词",
+    "loading": "加载中..."
   },
   "validate": {
     "phone_format_error": "手机格式错误"
@@ -114,6 +117,11 @@
   },
   "chat": {
     "create_conversation": "创建聊天",
-    "title": "聊天"
+    "title": "聊天",
+    "conversation_not_exsit": "聊天不存在",
+    "show_user_profile": "显示用户个人资料",
+    "show_group_info": "显示群聊信息",
+    "send_input_placeholder": "请输入信息，Enter 发送，Shift+Enter 换行",
+    "send_message_not_empty": "发送消息不能为空"
   }
 }

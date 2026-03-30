@@ -3,14 +3,19 @@ import { Manager } from 'socket.io-client';
 import { NotificationSocketProvider } from './NotificationSocketContext';
 import { ChatSocketProvider } from './ChatSocketContext';
 import { useProfile } from '@/hooks';
+import emitter from '../emitter';
+import GlobalEventListener from './GlobalEventListener';
 
 export interface ISocketsManagerContextValue {
   manager?: Manager;
+  emitter: typeof emitter;
 }
 
 const url = import.meta.env.VITE_WEBSOCKET_URL;
 
-const SocketsManagerContext = createContext<ISocketsManagerContextValue>({});
+const SocketsManagerContext = createContext<ISocketsManagerContextValue>({
+  emitter,
+});
 
 const SocketsManagerProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const managerRef = useRef<Manager>();
@@ -40,9 +45,11 @@ const SocketsManagerProvider: React.FC<React.PropsWithChildren> = ({ children })
   }, []);
 
   return (
-    <SocketsManagerContext.Provider value={{ manager: managerRef.current }}>
+    <SocketsManagerContext.Provider value={{ manager: managerRef.current, emitter }}>
       <NotificationSocketProvider>
-        <ChatSocketProvider>{children} </ChatSocketProvider>
+        <ChatSocketProvider>
+          <GlobalEventListener>{children}</GlobalEventListener>
+        </ChatSocketProvider>
       </NotificationSocketProvider>
     </SocketsManagerContext.Provider>
   );

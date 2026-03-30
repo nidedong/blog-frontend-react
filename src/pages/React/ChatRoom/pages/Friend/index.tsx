@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import React, { useState } from 'react';
 import HeadBox from '../../components/HeadBox';
 import ToogleButtonList from '@/components/ToogleButtonList';
-import { friendOptions, FriendReqStatus } from '../../constants';
+import { FriendReqStatus } from '../../constants';
 import { ALL_VALUE } from '@/constants';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,9 @@ import SearchList from './SearchList';
 import { isNil, last } from 'lodash-es';
 import { Outlet, useMatches, useNavigate } from 'react-router';
 import { useUpdateEffect } from 'ahooks';
+import { ToggleButtonOwnProps } from '@mui/material/ToggleButton';
+import Stack from '@mui/material/Stack';
+import ReqBadge from '../../components/ReqBadge';
 
 const Friend = () => {
   const match = useMatches();
@@ -31,6 +34,22 @@ const Friend = () => {
   useUpdateEffect(() => {
     setCategory(initialCategory);
   }, [initialCategory]);
+
+  const friendOptions: ToggleButtonOwnProps[] = [
+    {
+      value: ALL_VALUE,
+      children: t('options.all'),
+    },
+    {
+      value: FriendReqStatus.Waiting,
+      children: (
+        <Stack direction='row' spacing={1}>
+          <span> {t('options.undetermined')}</span>
+          <ReqBadge />
+        </Stack>
+      ),
+    },
+  ];
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>

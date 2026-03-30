@@ -7,13 +7,15 @@ import { safeShowValue } from '@/utils';
 import ListItem, { ListItemProps } from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import { IUserItem } from '@/services';
+import { UserStatus } from '@/components';
 
 export interface IFriendItemProps extends ListItemProps {
   data?: IUserItem;
   extra?: React.ReactNode;
+  isOnline?: boolean;
 }
 
-const FriendItem: React.FC<IFriendItemProps> = ({ data, extra }) => {
+const FriendItem: React.FC<IFriendItemProps> = ({ data, extra, isOnline }) => {
   return (
     <ListItem
       sx={(theme) => ({
@@ -40,7 +42,9 @@ const FriendItem: React.FC<IFriendItemProps> = ({ data, extra }) => {
           spacing={1}
           direction='row'
         >
-          <Avatar src={data?.avatar} />
+          <UserStatus isOnline={isOnline}>
+            <Avatar src={data?.avatar} />
+          </UserStatus>
 
           <Stack sx={{ flex: 1, minWidth: 0 }}>
             <Typography variant='subtitle2'>{safeShowValue(data?.nickName)}</Typography>

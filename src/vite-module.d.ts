@@ -21,3 +21,8 @@ declare module '@mui/material/styles' {
     // section?: string;
   }
 }
+declare module '@mui/material/IconButton' {
+  export interface IconButtonOwnProps {
+    variant?: 'hover';
+  }
+}

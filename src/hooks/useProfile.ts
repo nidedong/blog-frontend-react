@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 const useProfile = () => {
-  const setState = useGlobalState((state) => state.setState);
+  const initState = useGlobalState((state) => state.initState);
 
   const query = useQuery({
     queryFn: () => getUserProfileApi(),
@@ -15,9 +15,7 @@ const useProfile = () => {
   useEffect(() => {
     if (query.isSuccess && query.data) {
       setUserInfo(query.data);
-      setState({
-        user: query.data,
-      });
+      initState(query.data);
     }
   }, [query.data, query.isSuccess]);
 

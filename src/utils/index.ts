@@ -6,4 +6,5 @@ export * from './encrypt';
 export * from './format';
 export * from './validate';
 export * from './img';
+export * from './dayjs';
 export { default as request } from './request';

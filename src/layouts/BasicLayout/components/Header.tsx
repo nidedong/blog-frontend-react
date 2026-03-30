@@ -4,35 +4,34 @@ import MenuButton from './MenuButton';
 import ColorModeIconDropdown from '@/themes/ColorModeIconDropdown';
 import { SwitchLanguage } from '@/components';
 import { useGlobalState } from '@/stores/global';
-import { sum } from 'lodash-es';
+import { isNil, sum } from 'lodash-es';
 import Popover from '@mui/material/Popover';
 import { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import InBox from './InBox';
 import { Player } from '@lordicon/react';
 import { useTheme } from '@mui/material/styles';
 import BellIcon from '@/assets/lordicon/bell.json';
-import { useMount, useUpdateEffect } from 'ahooks';
+import { useMount, usePrevious, useUpdateEffect } from 'ahooks';
 
 // import CustomDatePicker from './CustomDatePicker';
 // import Search from './Search';
 
 export default function Header() {
-  const user = useGlobalState((state) => state.user);
   const [inBoxEl, setInBoxEl] = useState<HTMLElement | null>(null);
   const inBoxElOpen = !!inBoxEl;
   const playBellRef = useRef<Player>(null);
   const theme = useTheme();
   const [bellState, setBellState] = useState<string | undefined>('in-bell');
+  const badgeCount = useGlobalState((s) =>
+    sum([s.notificationUnread, s.messageUnread, s.friendreqUnread])
+  );
+  console.log('🚀 ~ Header ~ badgeCount:', badgeCount);
 
   useMount(() => {
     playBellRef.current?.playFromBeginning();
   });
 
-  const badgeCount = sum([
-    user?.badges?.message,
-    user?.badges?.notification,
-    user?.badges?.friendreq,
-  ]);
+  const preBadgeCount = usePrevious(badgeCount);
 
   const showBadge = badgeCount > 0;
 
@@ -45,12 +44,23 @@ export default function Header() {
   };
 
   useUpdateEffect(() => {
-    if (playBellRef.current?.isPlaying || badgeCount <= 0) {
+    if (
+      playBellRef.current?.isPlaying ||
+      badgeCount <= 0 ||
+      // 不是新增消息
+      (!isNil(preBadgeCount) && preBadgeCount > badgeCount)
+    ) {
       return;
     }
     setBellState('loop-bell');
     playBellRef.current?.playFromBeginning();
-  }, [badgeCount]);
+  }, [badgeCount, preBadgeCount]);
+
+  useEffect(() => {
+    if (!isNil(preBadgeCount) && preBadgeCount > badgeCount) {
+      handleInBoxClose();
+    }
+  }, [preBadgeCount, badgeCount]);
 
   return (
     <Stack

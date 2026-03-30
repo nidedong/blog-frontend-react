@@ -1,9 +1,11 @@
 import React, { createContext, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import useSocketManager from '../hooks/useSocketManager';
-import { SocketNameSpace } from '../constants';
+import { ChatEvent, SocketNameSpace } from '../constants';
 import { getToken } from '@/utils';
 import { reconnectWithNewToken } from '../utils';
+import { IMessageDto } from '@/pages/React/ChatRoom/service';
+import useSocketEmitter from '../hooks/useSocketEmitter';
 
 export interface IChatSocketContextValue {
   socket?: Socket;
@@ -13,6 +15,7 @@ const ChatSocketContext = createContext<IChatSocketContextValue>({});
 
 const ChatSocketProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const manager = useSocketManager();
+  const emitter = useSocketEmitter();
   const socketRef = useRef<Socket>();
 
   if (!socketRef.current) {
@@ -33,7 +36,15 @@ const ChatSocketProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
     socketRef.current.on('token_expired', () => {
       reconnectWithNewToken(socketRef.current);
     });
-  }, [manager]);
+  }, []);
+
+  useEffect(() => {
+    if (!socketRef.current) return;
+    // 新消息
+    socketRef.current.on(ChatEvent.NEW_MESSAGE, (payload: { message: IMessageDto }) => {
+      emitter.emit('chat:new_message', payload);
+    });
+  }, [emitter]);
 
   return (
     <ChatSocketContext.Provider value={{ socket: socketRef.current }}>

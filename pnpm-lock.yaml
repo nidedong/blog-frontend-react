@@ -56,6 +56,9 @@ dependencies:
   '@types/path-browserify':
     specifier: ^1.0.3
     version: 1.0.3
+  '@types/react-scroll':
+    specifier: ^1.8.10
+    version: 1.8.10
   ahooks:
     specifier: ^3.9.0
     version: 3.9.0(react-dom@18.3.1)(react@18.3.1)
@@ -83,6 +86,9 @@ dependencies:
   i18next:
     specifier: ^25.3.0
     version: 25.3.0(typescript@5.6.3)
+  idb:
+    specifier: ^8.0.3
+    version: 8.0.3
   immer:
     specifier: ^10.1.1
     version: 10.1.1
@@ -95,12 +101,12 @@ dependencies:
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
-  lottie-react:
-    specifier: ^2.4.1
-    version: 2.4.1(react-dom@18.3.1)(react@18.3.1)
   lottie-web:
     specifier: ^5.13.0
     version: 5.13.0
+  mitt:
+    specifier: ^3.0.1
+    version: 3.0.1
   normalize.css:
     specifier: ^8.0.1
     version: 8.0.1
@@ -128,6 +134,9 @@ dependencies:
   react-router:
     specifier: ^7.6.3
     version: 7.6.3(react-dom@18.3.1)(react@18.3.1)
+  react-scroll:
+    specifier: ^1.9.3
+    version: 1.9.3(react-dom@18.3.1)(react@18.3.1)
   react-use:
     specifier: ^17.6.0
     version: 17.6.0(react-dom@18.3.1)(react@18.3.1)
@@ -137,6 +146,9 @@ dependencies:
   tailwindcss:
     specifier: ^4.1.13
     version: 4.1.13
+  uuid-random:
+    specifier: ^1.3.2
+    version: 1.3.2
   zustand:
     specifier: ^5.0.6
     version: 5.0.6(@types/react@18.3.23)(immer@10.1.1)(react@18.3.1)
@@ -2534,6 +2546,12 @@ packages:
       '@types/react': 18.3.23
     dev: true
 
+  /@types/react-scroll@1.8.10:
+    resolution: {integrity: sha512-RD4Z7grbdNGOKwKnUBKar6zNxqaW3n8m9QSrfvljW+gmkj1GArb8AFBomVr6xMOgHPD3v1uV3BrIf01py57daQ==}
+    dependencies:
+      '@types/react': 18.3.23
+    dev: false
+
   /@types/react-transition-group@4.4.12(@types/react@18.3.23):
     resolution: {integrity: sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==}
     peerDependencies:
@@ -3693,6 +3711,10 @@ packages:
       safer-buffer: 2.1.2
     optional: true
 
+  /idb@8.0.3:
+    resolution: {integrity: sha512-LtwtVyVYO5BqRvcsKuB2iUMnHwPVByPCXFXOpuU96IZPPoPN6xjOGxZQ74pgSVVLQWtUOYgyeL4GE98BY5D3wg==}
+    dev: false
+
   /ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
@@ -4004,6 +4026,10 @@ packages:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
     dev: true
 
+  /lodash.throttle@4.1.1:
+    resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
+    dev: false
+
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
     dev: false
@@ -4013,17 +4039,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: false
-
-  /lottie-react@2.4.1(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-LQrH7jlkigIIv++wIyrOYFLHSKQpEY4zehPicL9bQsrt1rnoKRYCYgpCUe5maqylNtacy58/sQDZTkwMcTRxZw==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    dependencies:
-      lottie-web: 5.13.0
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /lottie-web@5.13.0:
@@ -4115,6 +4130,10 @@ packages:
     engines: {node: '>= 18'}
     dependencies:
       minipass: 7.1.2
+    dev: false
+
+  /mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
     dev: false
 
   /mkdirp@3.0.1:
@@ -4949,6 +4968,18 @@ packages:
       set-cookie-parser: 2.7.1
     dev: false
 
+  /react-scroll@1.9.3(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-xv7FXqF3k63aSLNu4/NjFvRNI0ge7DmmmsbeGarP7LZVAlJMSjUuW3dTtLxp1Afijyv0lS2qwC0GiFHvx1KBHQ==}
+    peerDependencies:
+      react: ^15.5.4 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^15.5.4 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    dependencies:
+      lodash.throttle: 4.1.1
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    dev: false
+
   /react-transition-group@4.4.5(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
     peerDependencies:
@@ -5400,6 +5431,10 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     dependencies:
       react: 18.3.1
+    dev: false
+
+  /uuid-random@1.3.2:
+    resolution: {integrity: sha512-UOzej0Le/UgkbWEO8flm+0y+G+ljUon1QWTEZOq1rnMAsxo2+SckbiZdKzAHHlVh6gJqI1TjC/xwgR50MuCrBQ==}
     dev: false
 
   /vite@6.3.5(@types/node@24.3.0)(less@4.3.0):

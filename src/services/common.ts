@@ -40,3 +40,12 @@ export const searchNoRelationUserListApi = (
     method: 'get',
     params,
   });
+
+export const getUserOnlineStatusBatchApi = (data: {
+  ids: string[];
+}): Promise<Record<string, boolean>> =>
+  request({
+    url: '/user/status/batch',
+    method: 'post',
+    data,
+  });

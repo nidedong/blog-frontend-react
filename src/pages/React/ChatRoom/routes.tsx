@@ -6,6 +6,7 @@ import FriendPendingList from './pages/Friend/FriendPendingList';
 import Conversation from './pages/Conversation';
 import Group from './pages/Group';
 import Friend from './pages/Friend';
+import ReqBadge from './components/ReqBadge';
 
 const fixedRoutes: RouteObject[] = [
   {
@@ -13,6 +14,7 @@ const fixedRoutes: RouteObject[] = [
     handle: {
       name: i18n.t('route.chat_room_friend'),
       icon: <EmojiPeopleIcon />,
+      extraNode: <ReqBadge />,
     },
     Component: Friend,
     children: [

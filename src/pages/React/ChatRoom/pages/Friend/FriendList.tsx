@@ -2,21 +2,35 @@ import React, { useMemo } from 'react';
 import FriendItem from '../../components/FriendItem';
 import { Empty, Loading } from '@/components';
 import { getFriendListApi, IFriendItem } from '../../service';
-import { useQuery } from '@tanstack/react-query';
+import { QueryKey, useQuery } from '@tanstack/react-query';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useOutletContext } from 'react-router';
 import ChatIcon from '@mui/icons-material/Chat';
 import Box from '@mui/material/Box';
+import toast from 'react-hot-toast';
+import { usePresenceMutation } from '@/hooks';
+import { usePresenceState } from '@/stores/presence';
+
+const listQueryKey: QueryKey = ['getFriendListApi'];
 
 const FriendList: React.FC = () => {
   const { keyword } = useOutletContext<{ keyword?: string }>();
   const { t } = useTranslation();
+  const onlineMap = usePresenceState((s) => s.map);
+
+  const presenceMutation = usePresenceMutation();
+
   const listQuery = useQuery({
-    queryFn: () => getFriendListApi(),
-    queryKey: ['getFriendListApi'],
+    queryFn: () =>
+      getFriendListApi().then((list) => {
+        presenceMutation.mutate({ ids: list.map((item) => item.id) });
+        return list;
+      }),
+    queryKey: listQueryKey,
   });
+
   const navigate = useNavigate();
 
   const dataSource = useMemo(() => {
@@ -27,7 +41,13 @@ const FriendList: React.FC = () => {
   if (listQuery.isFetching) return <Loading />;
   if (!dataSource || dataSource.length === 0) return <Empty />;
 
-  const handleChat = (data: IFriendItem) => {};
+  const handleChat = (data: IFriendItem) => {
+    if (!data.conversationId) {
+      toast.error(t('chat.conversation_not_exsit'));
+      return;
+    }
+    navigate(`/react/chatroom/conversation/${data.conversationId}`);
+  };
 
   return (
     <>
@@ -40,6 +60,7 @@ const FriendList: React.FC = () => {
         <FriendItem
           data={item}
           key={item.id}
+          isOnline={onlineMap[item.id]}
           extra={
             <Box sx={{ pr: 1 }}>
               <Tooltip title={t('chat.title')}>

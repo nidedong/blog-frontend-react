@@ -14,12 +14,16 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useOutletContext } from 'react-router';
 import { useFriendReqList } from '../../hooks';
+import { sum } from 'lodash-es';
+import { useSocketEmitter } from '@/sockets';
+import { toConversationVM } from '../../utils';
 
 const FriendPendingList = () => {
   const { keyword } = useOutletContext<{ keyword?: string }>();
   const { t } = useTranslation();
   const userId = useGlobalState((state) => state.user?.id);
-
+  const setFriendreqUnread = useGlobalState((state) => state.setFriendreqUnread);
+  const emitter = useSocketEmitter();
   const reqListQuery = useFriendReqList();
   const updateMutation = useMutation({
     mutationFn: handleFriendReqApi,
@@ -43,8 +47,13 @@ const FriendPendingList = () => {
         id: record.id,
         status: FriendReqStatus.Agree,
       })
-      .then(() => {
+      .then((res) => {
         reqListQuery.removeItem(record.id);
+        setFriendreqUnread(res.unreadCount);
+        if (res.conversation) {
+          // 同意好友申请后添加会话
+          emitter.emit('notify:new_conversation', toConversationVM(res.conversation));
+        }
       })
       .finally(() => {
         reqListQuery.toogleIsAgreeing(record.id);
@@ -58,8 +67,9 @@ const FriendPendingList = () => {
         id: record.id,
         status: FriendReqStatus.Reject,
       })
-      .then(() => {
+      .then((res) => {
         reqListQuery.removeItem(record.id);
+        setFriendreqUnread(res.unreadCount);
       })
       .finally(() => {
         reqListQuery.toogleIsRejecting(record.id);

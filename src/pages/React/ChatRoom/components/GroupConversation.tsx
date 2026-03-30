@@ -1,4 +1,3 @@
-import { IUserInfo } from '@/types';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import React from 'react';
@@ -8,19 +7,20 @@ import { safeShowValue } from '@/utils';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate } from 'react-router';
+import { IConversationDetail } from '../store';
 
-export interface IConversationItemProps {
-  data?: IUserInfo;
+export interface IGroupConversationProps {
+  data?: IConversationDetail;
   extra?: React.ReactNode;
   selected?: boolean;
 }
 
-const ConversationItem: React.FC<IConversationItemProps> = ({ data, extra, selected }) => {
+const GroupConversation: React.FC<IGroupConversationProps> = ({ data, extra, selected }) => {
   const navigate = useNavigate();
 
   const handleChat = () => {
     if (!data) return;
-    navigate(`/react/chatroom/conversation/${data?.id}`);
+    navigate(`/react/chatroom/group/${data?.id}`);
   };
 
   return (
@@ -65,4 +65,4 @@ const ConversationItem: React.FC<IConversationItemProps> = ({ data, extra, selec
   );
 };
 
-export default ConversationItem;
+export default GroupConversation;

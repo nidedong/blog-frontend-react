@@ -17,7 +17,11 @@ export interface IReadNotificationParams {
   notifyId?: string;
 }
 
-export const readNotificationApi = (data: IReadNotificationParams): Promise<IResType> =>
+export const readNotificationApi = (
+  data: IReadNotificationParams
+): Promise<{
+  unreadCount: number;
+}> =>
   request({
     url: '/notification/read',
     method: 'put',

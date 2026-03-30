@@ -19,7 +19,6 @@ import Emtpy from '@/components/Empty';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getNotifiyListApi, readNotificationApi } from '../service';
 import { useGlobalState } from '@/stores/global';
-import { sum } from 'lodash-es';
 
 export interface INotificationItemProps {
   data?: NotificationItemData;
@@ -32,7 +31,7 @@ export const NotificationItem = React.memo<INotificationItemProps>(({ data }) =>
     mutationFn: readNotificationApi,
   });
   const setState = useNotificationStore((state) => state.setState);
-  const modifyBadges = useGlobalState((state) => state.modifyBadges);
+  const setNotificationUnread = useGlobalState((state) => state.setNotificationUnread);
 
   const handleRead = () => {
     readMutation
@@ -40,11 +39,11 @@ export const NotificationItem = React.memo<INotificationItemProps>(({ data }) =>
         notifyId: data?.id,
         broadcastId: data?.broadcastId!,
       })
-      .then(() => {
+      .then(({ unreadCount }) => {
         setState((pre) => ({
           list: pre.list.filter((item) => item.broadcastId !== data?.broadcastId),
         }));
-        modifyBadges((pre) => ({ notification: sum([pre.notification, -1]) }));
+        setNotificationUnread(unreadCount);
       });
   };
 

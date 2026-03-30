@@ -213,6 +213,25 @@ export const inputsCustomizations: Components<Theme> = {
               height: '2.5rem',
             },
           },
+          {
+            props: {
+              variant: 'hover',
+            },
+            style: {
+              border: 'none',
+              borderRadius: '50%',
+              backgroundColor: gray[50],
+              ...theme.applyStyles('dark', {
+                backgroundColor: gray[800],
+                '&:hover': {
+                  backgroundColor: gray[600],
+                },
+                '&:active': {
+                  backgroundColor: gray[600],
+                },
+              }),
+            },
+          },
         ],
       }),
     },

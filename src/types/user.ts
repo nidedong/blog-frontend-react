@@ -15,7 +15,6 @@ export interface IUserInfo {
   lastLoginTime?: Date;
   locale?: string;
   registerType?: RegisterType;
-  isOnline?: boolean;
   badges: {
     notification: number;
     message: number;

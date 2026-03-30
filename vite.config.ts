@@ -14,6 +14,12 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 3001,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:4000', // 目标后端服务
+          changeOrigin: true, // 开启跨域
+        },
+      },
     },
   };
 });

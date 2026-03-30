@@ -13,9 +13,9 @@ import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import i18n from '@/utils/i18n';
 import NotificationList from './NotificationList';
-import ConversationList from './ConversationList';
 import { useNavigate } from 'react-router';
 import { useGlobalState } from '@/stores/global';
+import UnreadChatList from '@/pages/React/ChatRoom/components/UnreadChatList';
 
 enum TabEnum {
   notification = 'notification',
@@ -31,7 +31,7 @@ const tabList = [
   {
     label: i18n.t('notify.unread_message'),
     value: TabEnum.unread_message,
-    children: <ConversationList />,
+    children: <UnreadChatList />,
   },
 ];
 
@@ -41,7 +41,7 @@ const InBox: React.FC<{
   const { t } = useTranslation();
   const [tab, setTab] = useState(TabEnum.notification);
   const navigate = useNavigate();
-  const user = useGlobalState((state) => state.user);
+  const friendreqUnread = useGlobalState((state) => state.friendreqUnread);
 
   const handleToFriends = () => {
     navigate('/react/chatroom/friend/pending');
@@ -102,7 +102,7 @@ const InBox: React.FC<{
             >
               <EmojiPeopleIcon />
               <Typography fontWeight={600} variant='body1'>
-                {user?.badges.friendreq ?? 0}
+                {friendreqUnread ?? 0}
               </Typography>
             </Stack>
           </Paper>

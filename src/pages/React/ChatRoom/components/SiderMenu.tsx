@@ -59,7 +59,6 @@ const MenuRender: React.FC<{
 
 const SiderMenu = () => {
   const { t } = useTranslation();
-
   return (
     <Box
       sx={{
@@ -74,7 +73,7 @@ const SiderMenu = () => {
 
       <List dense sx={{ gap: 0.5 }}>
         {fixedRoutes.map((route) => (
-          <MenuRender key={route.path} route={route} />
+          <MenuRender key={route.path} route={route} extra={route.handle?.extraNode} />
         ))}
       </List>
 
